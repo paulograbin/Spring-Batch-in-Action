@@ -1,5 +1,7 @@
 package com.manning.sbia.ch01.batch;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -10,9 +12,11 @@ public class PirocoTasklet implements Tasklet {
 
     int count = 0;
 
+    private static final Logger LOG = LoggerFactory.getLogger(PirocoTasklet.class);
+
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-        System.out.println("Entrou");
+        LOG.info("Entrou...");
 
         if (count <= 3) {
             System.out.println(count);
@@ -20,7 +24,7 @@ public class PirocoTasklet implements Tasklet {
             return RepeatStatus.CONTINUABLE;
         }
 
-        System.out.println("Saiu");
+        LOG.info("Saiu");
         return RepeatStatus.FINISHED;
     }
 }
