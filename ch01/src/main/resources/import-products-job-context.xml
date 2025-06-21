@@ -8,9 +8,14 @@
 	http://www.springframework.org/schema/batch/spring-batch-2.1.xsd">
 
 	<job id="importProducts" xmlns="http://www.springframework.org/schema/batch">
-		<step id="decompress" next="readWriteProducts">
+		<step id="decompress" next="piroco">
 			<tasklet ref="decompressTasklet" />
 		</step>
+
+		<step id="piroco" next="readWriteProducts">
+			<tasklet ref="pirocoTask"  />
+		</step>
+
 		<step id="readWriteProducts">
 			<tasklet>
 				<chunk reader="reader" writer="writer" commit-interval="3" skip-limit="5">
@@ -18,10 +23,12 @@
 						<include class="org.springframework.batch.item.file.FlatFileParseException" />
 					</skippable-exception-classes>
 				</chunk>
-			</tasklet>			
+			</tasklet>
 		</step>
 	</job>
-	
+
+	<bean id="pirocoTask" class="com.manning.sbia.ch01.batch.PirocoTasklet" scope="step"/>
+
 	<bean id="decompressTasklet" class="com.manning.sbia.ch01.batch.DecompressTasklet" scope="step">
 		<property name="inputResource" value="#{jobParameters['inputResource']}" />
 		<property name="targetDirectory" value="#{jobParameters['targetDirectory']}" />
