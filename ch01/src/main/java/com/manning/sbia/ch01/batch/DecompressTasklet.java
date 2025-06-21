@@ -29,11 +29,19 @@ public class DecompressTasklet implements Tasklet {
 	
 	private String targetFile;
 	
-	public RepeatStatus execute(StepContribution contribution,
-			ChunkContext chunkContext) throws Exception {
+	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
+		System.out.println("decompress");
+
+		if (inputResource.getFile().exists() && inputResource.getFile().getName().endsWith(".txt")) {
+			System.out.println("Not compressed zip, skipping step");
+
+			FileUtils.copyFile(inputResource.getFile(), new File(targetDirectory, targetFile));
+
+			return RepeatStatus.FINISHED;
+		}
+
 		ZipInputStream zis = new ZipInputStream(new BufferedInputStream(inputResource.getInputStream()));
 
-		
 		File targetDirectoryAsFile = new File(targetDirectory);
 		if(!targetDirectoryAsFile.exists()) {
 			FileUtils.forceMkdir(targetDirectoryAsFile);
