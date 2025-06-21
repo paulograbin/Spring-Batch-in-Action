@@ -33,6 +33,8 @@ public class ProductJdbcItemWriter implements ItemWriter<Product> {
 	 */
 	public void write(List<? extends Product> items) throws Exception {
 		for(Product item : items) {
+			System.out.println("opa opa");
+
 			int updated = jdbcTemplate.update(UPDATE_PRODUCT,
 				item.getName(),item.getDescription(),item.getPrice(),item.getId()
 			);
