@@ -45,7 +45,7 @@ public class ImportProductsIntegrationTest {
 		int initial = jdbcTemplate.queryForInt("select count(1) from product");
 		
 		jobLauncher.run(job, new JobParametersBuilder()
-			.addString("inputResource", "classpath:/input/products.zip")
+			.addString("inputResource", "classpath:/input/products.txt")
 			.addString("targetDirectory", "./target/importproductsbatch/")
 			.addString("targetFile","products.txt")
 			.addLong("timestamp", System.currentTimeMillis())

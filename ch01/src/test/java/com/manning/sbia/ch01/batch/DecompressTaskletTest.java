@@ -30,7 +30,7 @@ public class DecompressTaskletTest {
 
 	@Test public void execute() throws Exception {
 		DecompressTasklet tasklet = new DecompressTasklet();
-		tasklet.setInputResource(new ClassPathResource("/input/products.zip"));
+		tasklet.setInputResource(new ClassPathResource("/input/products.txt"));
 		File outputDir = new File("./target/decompresstasklet");
 		if(outputDir.exists()) {
 			FileUtils.deleteDirectory(outputDir);
