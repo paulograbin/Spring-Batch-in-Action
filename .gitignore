@@ -10,3 +10,9 @@
 *.jar
 *.war
 *.ear
+
+
+
+
+# IntelliJ files
+.idea/
