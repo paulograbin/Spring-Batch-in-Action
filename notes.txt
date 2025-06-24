@@ -1,0 +1,23 @@
+infrastructure components: 
+job launcher: starts jobs executions
+job reposiory: persists job execution metadata
+
+
+
+
+
+application components:
+job: represents a batch process
+step: a pahase in a job,; a job is a sequence of steps
+tasklet: a transactional repetable process in a step
+item: a ricord read or written
+chunk: a list of givens
+reader: reads from atasoruce
+processor: transfors/valdiate/filter
+writer: write a chunk to a datasource
+
+chunk processing: suited for batch apps, best practice in terms of memory consumption and performance
+
+
+main components: reader, processor, writer
+
