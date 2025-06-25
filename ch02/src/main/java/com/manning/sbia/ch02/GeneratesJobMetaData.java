@@ -19,6 +19,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 
+import static org.apache.commons.lang.BooleanUtils.isFalse;
+
 /**
  * Generates some execution.
  * WARNING: the job repository is deleted first!
@@ -92,7 +94,14 @@ public class GeneratesJobMetaData {
 	}
 	
 	private static void copyInputFileToRepoDir(String file) throws Exception {
-		FileUtils.copyFile(new File("./input",file), new File(repoDir,"products.zip"));
+		File srcFile = new File("./input", file);
+		System.out.println(srcFile.getAbsolutePath());
+
+		if (isFalse(srcFile.exists())) {
+			System.err.println("You forgot to place the file in the repository root level dir");
+		}
+
+		FileUtils.copyFile(srcFile, new File(repoDir,"products.zip"));
 	}
 	
 	private static void initRepoDir() throws Exception {
