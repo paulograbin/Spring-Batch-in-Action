@@ -6,19 +6,19 @@ package com.manning.sbia.ch11;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.webapp.WebAppContext;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -54,7 +54,7 @@ public class EnterpriseIntegrationTest {
 
 	@Before
 	public void setUp() throws Exception {
-		startWebContainer();
+//		startWebContainer();
 		jdbcTemplate.update("delete from product");
 	}
 
@@ -126,11 +126,11 @@ public class EnterpriseIntegrationTest {
 	}	
 
 	private void checkProductImportTableCount(int expected) {
-		Assert.assertEquals(expected, jdbcTemplate.queryForInt("select count(1) from product_import"));
+		Assert.assertEquals(Optional.of(expected), jdbcTemplate.queryForObject("select count(1) from product_import", Integer.class));
 	}
 	
 	private void checkProductTableCount(int expected) {
-		Assert.assertEquals(expected, jdbcTemplate.queryForInt("select count(1) from product"));
+		Assert.assertEquals(Optional.of(expected), jdbcTemplate.queryForObject("select count(1) from product", Integer.class));
 	}
 
 	private void assertPreConditions() {
@@ -147,25 +147,22 @@ public class EnterpriseIntegrationTest {
 								"products-" + importId + ".xml"), "UTF-8");
 	}
 
-	private DataSource getWebAppDataSource(WebAppContext wac) {
-		ApplicationContext webAppAppCtx = getWebAppSpringContext(wac);
-		Assert.assertNotNull(webAppAppCtx);
-		return webAppAppCtx.getBean(DataSource.class);
+	private DataSource getWebAppDataSource(ApplicationContext wac) {
+		return wac.getBean(DataSource.class);
 	}
 
-	private ApplicationContext getWebAppSpringContext(WebAppContext wac) {
-		ApplicationContext webAppAppCtx = WebApplicationContextUtils
-				.getWebApplicationContext(wac.getServletContext());
-		return webAppAppCtx;
+	private ApplicationContext getWebAppSpringContext(ApplicationContext wac) {
+
+		return wac;
 	}
 
-	private void setUpSpringBeans(WebAppContext wac) {
+	private void setUpSpringBeans(ApplicationContext wac) {
 		setUpJdbcTemplate(wac);
 		setUpReceiverChannel(wac);
 		setUpRestTemplate(wac);
 	}
 	
-	private void setUpRestTemplate(WebAppContext wac) {
+	private void setUpRestTemplate(ApplicationContext wac) {
 		this.restTemplate = new RestTemplate();
 		List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
 		converters.add(new StringHttpMessageConverter());
@@ -176,30 +173,27 @@ public class EnterpriseIntegrationTest {
 		restTemplate.setMessageConverters(converters);
 	}
 	
-	private void setUpJdbcTemplate(WebAppContext wac) {
+	private void setUpJdbcTemplate(ApplicationContext wac) {
 		this.jdbcTemplate = new JdbcTemplate(getWebAppDataSource(wac));
 	}
 	
-	private void setUpReceiverChannel(WebAppContext wac) {
-		this.receiverChannel = getWebAppSpringContext(wac)
-			.getBean("job-executions", PollableChannel.class);
+	private void setUpReceiverChannel(ApplicationContext wac) {
+		this.receiverChannel = getWebAppSpringContext(wac).getBean("job-executions", PollableChannel.class);
 	}
 
-	private void startWebContainer() throws Exception {
+	private void startWebContainer(ApplicationContext applicationContext) throws Exception {
 		Server server = new Server();
-		Connector connector = new SelectChannelConnector();
-		connector.setPort(8080);
-		connector.setHost("127.0.0.1");
+		Connector connector = new ServerConnector(server);
 		server.addConnector(connector);
 
-		WebAppContext wac = new WebAppContext();
-		wac.setContextPath("/enterpriseintegration");
-		wac.setWar("./src/main/webapp");
-		server.setHandler(wac);
+//		WebAppContext wac = new WebAppContext();
+//		wac.setContextPath("/enterpriseintegration");
+//		wac.setWar("./src/main/webapp");
+//		server.setHandler(wac);
 		server.setStopAtShutdown(true);
 
 		server.start();
-		setUpSpringBeans(wac);
+		setUpSpringBeans(applicationContext);
 	}
 
 	private void stopWebContainer() throws Exception {

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.manning.sbia.ch13;
 
@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 
 import com.manning.sbia.ch13.ThreadUtils;
@@ -18,33 +19,29 @@ import com.manning.sbia.ch13.domain.ProductForColumnRange;
  *
  */
 public class DummyProductForColumnRangeWriter implements ItemWriter<ProductForColumnRange> {
-	
-	private List<ProductForColumnRange> products = new ArrayList<ProductForColumnRange>();
 
-	/* (non-Javadoc)
-	 * @see org.springframework.batch.item.ItemWriter#write(java.util.List)
-	 */
-	@Override
-	public void write(List<? extends ProductForColumnRange> items) throws Exception {
-		ThreadUtils.writeThreadExecutionMessage("write", items);
-		for(ProductForColumnRange product : items) {
-			processProduct(product);
-		}
-	}
+    private List<ProductForColumnRange> products = new ArrayList<ProductForColumnRange>();
 
-	private void processProduct(ProductForColumnRange product) throws InterruptedException {
-		Thread.sleep(5);
-		synchronized(products) {
-			products.add(product);
-		}
-	}
-	
-	public List<ProductForColumnRange> getProducts() {
-		return Collections.unmodifiableList(products);
-	}
-	
-	public void clear() {
-		products.clear();
-	}
+    private void processProduct(ProductForColumnRange product) throws InterruptedException {
+        Thread.sleep(5);
+        synchronized (products) {
+            products.add(product);
+        }
+    }
 
+    public List<ProductForColumnRange> getProducts() {
+        return Collections.unmodifiableList(products);
+    }
+
+    public void clear() {
+        products.clear();
+    }
+
+    @Override
+    public void write(Chunk<? extends ProductForColumnRange> chunk) throws Exception {
+        ThreadUtils.writeThreadExecutionMessage("write", chunk.getItems());
+        for (ProductForColumnRange product : chunk.getItems()) {
+            processProduct(product);
+        }
+    }
 }

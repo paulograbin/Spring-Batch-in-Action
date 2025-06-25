@@ -3,12 +3,12 @@
  */
 package com.manning.sbia.ch09.transaction;
 
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 import org.apache.activemq.broker.jmx.QueueViewMBean;
 import org.hamcrest.BaseMatcher;
@@ -48,16 +48,17 @@ public class TransactionBehaviorTest extends AbstractRobustnessTest {
 		configureServiceForRead(service, read);
 		
 		final String toFailWriting = "7";
-		doNothing().when(service).writing(argThat(new BaseMatcher<String>() {
-			@Override
-			public boolean matches(Object input) {				
-				return !toFailWriting.equals(input);
-			}
-			
-			@Override
-			public void describeTo(Description desc) { }
-			
-		}));
+		doNothing().when(service).writing(argThat(new BaseMatcher<>() {
+            @Override
+            public boolean matches(Object input) {
+                return !toFailWriting.equals(input);
+            }
+
+            @Override
+            public void describeTo(Description desc) {
+            }
+
+        }));
 		doThrow(new ValidationException("")).when(service).writing(toFailWriting);
 			
 		JobExecution exec = jobLauncher.run(
@@ -81,16 +82,17 @@ public class TransactionBehaviorTest extends AbstractRobustnessTest {
 		configureServiceForRead(service, read);
 		
 		final String toFailWriting = "7";
-		doNothing().when(service).writing(argThat(new BaseMatcher<String>() {
-			@Override
-			public boolean matches(Object input) {				
-				return !toFailWriting.equals(input);
-			}
-			
-			@Override
-			public void describeTo(Description desc) { }
-			
-		}));
+		doNothing().when(service).writing(argThat(new BaseMatcher<>() {
+            @Override
+            public boolean matches(Object input) {
+                return !toFailWriting.equals(input);
+            }
+
+            @Override
+            public void describeTo(Description desc) {
+            }
+
+        }));
 		doThrow(new ValidationException("")).when(service).writing(toFailWriting);
 			
 		JobExecution exec = jobLauncher.run(
@@ -127,16 +129,17 @@ public class TransactionBehaviorTest extends AbstractRobustnessTest {
 			.thenReturn(null);
 		
 		final String toFailWriting = "7";
-		doNothing().when(service).writing(argThat(new BaseMatcher<String>() {
-			@Override
-			public boolean matches(Object input) {				
-				return !toFailWriting.equals(input);
-			}
-			
-			@Override
-			public void describeTo(Description desc) { }
-			
-		}));
+		doNothing().when(service).writing(argThat(new BaseMatcher<>() {
+            @Override
+            public boolean matches(Object input) {
+                return !toFailWriting.equals(input);
+            }
+
+            @Override
+            public void describeTo(Description desc) {
+            }
+
+        }));
 		doThrow(new ValidationException("")).when(service).writing(toFailWriting);
 			
 		JobExecution exec = jobLauncher.run(
@@ -165,16 +168,17 @@ public class TransactionBehaviorTest extends AbstractRobustnessTest {
 		Assert.assertEquals(read,productQueueView.getQueueSize());
 		
 		final String toFailWriting = "7";
-		doNothing().when(service).writing(argThat(new BaseMatcher<String>() {
-			@Override
-			public boolean matches(Object input) {				
-				return !toFailWriting.equals(input);
-			}
-			
-			@Override
-			public void describeTo(Description desc) { }
-			
-		}));
+		doNothing().when(service).writing(argThat(new BaseMatcher<>() {
+            @Override
+            public boolean matches(Object input) {
+                return !toFailWriting.equals(input);
+            }
+
+            @Override
+            public void describeTo(Description desc) {
+            }
+
+        }));
 		doThrow(new DeadlockLoserDataAccessException("",null)).when(service).writing(toFailWriting);
 			
 		JobExecution exec = jobLauncher.run(

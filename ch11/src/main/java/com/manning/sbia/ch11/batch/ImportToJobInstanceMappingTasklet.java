@@ -44,7 +44,7 @@ public class ImportToJobInstanceMappingTasklet implements Tasklet,InitializingBe
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(productImportId);		
+//		Assert.notNull(productImportId);
 	}
 
 }

@@ -49,7 +49,7 @@ public class ProcessIndicatorTest {
 		);
 
 		JdbcTemplate template = new JdbcTemplate(dataSource);
-		int count = template.queryForInt("select count(id) from product where processed = false");
+		int count = template.queryForObject("select count(id) from product where processed = false", Integer.class);
 		Assert.assertEquals(0, count);
 	}
 }

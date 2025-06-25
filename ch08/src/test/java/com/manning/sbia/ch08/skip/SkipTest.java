@@ -94,7 +94,7 @@ public class SkipTest {
 	private JdbcTemplate tpl;
 	
 	private int countProducts() {
-		return tpl.queryForInt("select count(1) from product");
+		return tpl.queryForObject("select count(1) from product", Integer.class);
 	}
 	
 	private void deleteTables() {
@@ -103,7 +103,7 @@ public class SkipTest {
 	}
 	
 	private int countSkippedProducts() {
-		return tpl.queryForInt("select count(1) from skipped_product");
+		return tpl.queryForObject("select count(1) from skipped_product", Integer.class);
 	}
 	
 	private StepExecution getStepExec(JobExecution exec) {

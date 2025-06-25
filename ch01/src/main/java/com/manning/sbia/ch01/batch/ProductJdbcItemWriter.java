@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -21,8 +22,10 @@ public class ProductJdbcItemWriter implements ItemWriter<Product> {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public void write(List<? extends Product> items) throws Exception {
-        for (Product item : items) {
+
+    @Override
+    public void write(Chunk<? extends Product> chunk) throws Exception {
+        for (Product item : chunk.getItems()) {
             int updated = jdbcTemplate.update(UPDATE_PRODUCT,
                     item.getName(), item.getDescription(), item.getPrice(), item.getId()
             );

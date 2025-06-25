@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.manning.sbia.ch11.repository.jdbc;
 
@@ -21,58 +21,57 @@ import com.manning.sbia.ch11.repository.ProductImportRepository;
 
 /**
  * @author acogoluegnes
- *
  */
 @Repository
 @Transactional
 public class JdbcProductImportRepository implements ProductImportRepository {
-	
-	private JdbcTemplate jdbcTemplate;
-	
-	private JobExplorer jobExplorer;
-	
-	public JdbcProductImportRepository(DataSource dataSource,JobExplorer jobExplorer) {
-		this.jdbcTemplate = new JdbcTemplate(dataSource);
-		this.jobExplorer = jobExplorer;
-	}
 
-	/* (non-Javadoc)
-	 * @see com.manning.sbia.ch11.repository.ProductImportRepository#createProductImport(java.lang.String)
-	 */
-	@Override
-	public void createProductImport(String importId)
-			throws DuplicateKeyException {
-		int count = jdbcTemplate.queryForInt("select count(1) from product_import where import_id = ?",importId);
-		if(count > 0) {
-			throw new DuplicateKeyException("Import already exists: "+importId);
-		}
-		jdbcTemplate.update("insert into product_import (import_id,creation_date) values (?,?)",importId,new Date());
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see com.manning.sbia.ch11.repository.ProductImportRepository#mapImportToJobInstance(java.lang.String, java.lang.Long)
-	 */
-	@Override
-	public void mapImportToJobInstance(String importId, Long jobInstanceId) {
-		jdbcTemplate.update("update product_import set job_instance_id = ? where import_id = ?",
-			jobInstanceId,importId);		
-	}
-	
-	@Override
-	public ProductImport get(String importId) {
-		int count = jdbcTemplate.queryForInt("select count(1) from product_import where import_id = ?",importId);
-		if(count == 0) {
-			throw new EmptyResultDataAccessException("No import with this ID: "+importId,1);
-		}
-		String status = "PENDING";
-		Long instanceId = jdbcTemplate.queryForLong("select job_instance_id from product_import where import_id = ?",importId);
-		JobInstance jobInstance = jobExplorer.getJobInstance(instanceId);		
-		if(jobInstance != null) {
-			JobExecution lastJobExecution = jobExplorer.getJobExecutions(jobInstance).get(0);
-			status = lastJobExecution.getStatus().toString();
-		}		 
-		return new ProductImport(importId, status);			
-	}
+    private JdbcTemplate jdbcTemplate;
+
+    private JobExplorer jobExplorer;
+
+    public JdbcProductImportRepository(DataSource dataSource, JobExplorer jobExplorer) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.jobExplorer = jobExplorer;
+    }
+
+    /* (non-Javadoc)
+     * @see com.manning.sbia.ch11.repository.ProductImportRepository#createProductImport(java.lang.String)
+     */
+    @Override
+    public void createProductImport(String importId)
+            throws DuplicateKeyException {
+        int count = jdbcTemplate.queryForObject("select count(1) from product_import where import_id = ?", Integer.class, importId);
+        if (count > 0) {
+            throw new DuplicateKeyException("Import already exists: " + importId);
+        }
+        jdbcTemplate.update("insert into product_import (import_id,creation_date) values (?,?)", importId, new Date());
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see com.manning.sbia.ch11.repository.ProductImportRepository#mapImportToJobInstance(java.lang.String, java.lang.Long)
+     */
+    @Override
+    public void mapImportToJobInstance(String importId, Long jobInstanceId) {
+        jdbcTemplate.update("update product_import set job_instance_id = ? where import_id = ?",
+                jobInstanceId, importId);
+    }
+
+    @Override
+    public ProductImport get(String importId) {
+        int count = jdbcTemplate.queryForObject("select count(1) from product_import where import_id = ?", Integer.class, importId);
+        if (count == 0) {
+            throw new EmptyResultDataAccessException("No import with this ID: " + importId, 1);
+        }
+        String status = "PENDING";
+        Long instanceId = jdbcTemplate.queryForObject("select job_instance_id from product_import where import_id = ?", Long.class, importId);
+        JobInstance jobInstance = jobExplorer.getJobInstance(instanceId);
+        if (jobInstance != null) {
+            JobExecution lastJobExecution = jobExplorer.getJobExecutions(jobInstance).get(0);
+            status = lastJobExecution.getStatus().toString();
+        }
+        return new ProductImport(importId, status);
+    }
 
 }

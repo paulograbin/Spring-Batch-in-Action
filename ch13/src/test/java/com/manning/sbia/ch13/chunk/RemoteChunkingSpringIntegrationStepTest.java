@@ -18,6 +18,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.manning.sbia.ch13.DummyProductWriter;
 
+import java.util.Optional;
+
 public class RemoteChunkingSpringIntegrationStepTest {
 	
 	private GenericXmlApplicationContext ctx = new GenericXmlApplicationContext();
@@ -55,13 +57,9 @@ public class RemoteChunkingSpringIntegrationStepTest {
 	
 	@Test
 	public void testMultithreadedStep() throws Exception {
-		JobExecution remoteChunkingImportProductsJobExec = launcher.run(
-				remoteChunkingImportProductsJob,
-			new JobParametersBuilder()
-				.toJobParameters()
-		);
+		JobExecution remoteChunkingImportProductsJobExec = launcher.run(remoteChunkingImportProductsJob, new JobParametersBuilder() .toJobParameters());
 		assertEquals(ExitStatus.COMPLETED, remoteChunkingImportProductsJobExec.getExitStatus());
-		assertEquals(jdbcTemplate.queryForInt("select count(1) from product"),itemWriter.getProducts().size());
+		assertEquals(Optional.ofNullable(jdbcTemplate.queryForObject("select count(1) from product", Integer.class)), itemWriter.getProducts().size());
 	}
 	
 	private void createApplicationContext() {

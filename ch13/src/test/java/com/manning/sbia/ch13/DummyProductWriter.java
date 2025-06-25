@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 
 import com.manning.sbia.ch13.ThreadUtils;
@@ -20,16 +21,6 @@ public class DummyProductWriter implements ItemWriter<Product> {
 	
 	private List<Product> products = new ArrayList<Product>();
 
-	/* (non-Javadoc)
-	 * @see org.springframework.batch.item.ItemWriter#write(java.util.List)
-	 */
-	@Override
-	public void write(List<? extends Product> items) throws Exception {
-		ThreadUtils.writeThreadExecutionMessage("write", items);
-		for(Product product : items) {
-			processProduct(product);
-		}
-	}
 
 	private void processProduct(Product product) throws InterruptedException {
 		Thread.sleep(5);
@@ -46,4 +37,11 @@ public class DummyProductWriter implements ItemWriter<Product> {
 		products.clear();
 	}
 
+	@Override
+	public void write(Chunk<? extends Product> chunk) throws Exception {
+		ThreadUtils.writeThreadExecutionMessage("write", chunk.getItems());
+		for(Product product : chunk.getItems()) {
+			processProduct(product);
+		}
+	}
 }

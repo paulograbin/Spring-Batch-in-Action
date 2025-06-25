@@ -6,7 +6,7 @@
 		</encoder>
 	</appender>
 
-	<logger name="org.springframework.batch" level="debug" />
+	<logger name="org.springframework.batch" level="info" />
 
 	<root level="error">
 		<appender-ref ref="STDOUT" />

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.manning.sbia.ch04;
 
@@ -21,27 +21,26 @@ import org.springframework.util.StringUtils;
  */
 public class JobParametersConverterTest {
 
-	@Test public void convert() throws Exception {
-		// trick to make the test portable (for double) on different OS
-		// the default number format used by the converter truncates digits
-		double doubleParam = 23.4;
-		NumberFormat format = new DecimalFormat("#"); // the one used in the converter
-		doubleParam = format.parse(format.format(doubleParam)).doubleValue();
-		Properties params = StringUtils.splitArrayElementsIntoProperties(new String[]{
-			"someString(string)=someStringValue",
-			"someDate(date)=2010/12/08",
-			"someLong(long)=23",
-			"someDouble(double)="+format.format(doubleParam)
-		}, "=");
-		JobParametersConverter converter = new DefaultJobParametersConverter();
-		JobParameters parameters = converter.getJobParameters(params);
-		Assert.assertEquals("someStringValue",parameters.getString("someString"));
-		Assert.assertEquals(23L,parameters.getLong("someLong"));
-		Assert.assertEquals(doubleParam,parameters.getDouble("someDouble"),0);
-		Assert.assertEquals(
-			"2010/12/08",
-			new SimpleDateFormat("yyyy/MM/dd").format(parameters.getDate("someDate"))
-		);
-	}
-	
+    @Test
+    public void convert() throws Exception {
+        // trick to make the test portable (for double) on different OS
+        // the default number format used by the converter truncates digits
+        double doubleParam = 23.4;
+        NumberFormat format = new DecimalFormat("#"); // the one used in the converter
+        doubleParam = format.parse(format.format(doubleParam)).doubleValue();
+        Properties params = StringUtils.splitArrayElementsIntoProperties(new String[]{
+                "someString(string)=someStringValue",
+                "someDate(date)=2010/12/08",
+                "someLong(long)=23",
+                "someDouble(double)=" + format.format(doubleParam)
+        }, "=");
+        JobParametersConverter converter = new DefaultJobParametersConverter();
+        JobParameters parameters = converter.getJobParameters(params);
+
+        Assert.assertEquals("someStringValue", parameters.getString("someString"));
+        Assert.assertEquals(23L, parameters.getLong("someLong").longValue());
+        Assert.assertEquals(doubleParam, parameters.getDouble("someDouble"), 0);
+        Assert.assertEquals("2010/12/08", new SimpleDateFormat("yyyy/MM/dd").format(parameters.getDate("someDate")));
+    }
+
 }

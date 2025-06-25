@@ -3,12 +3,14 @@
  */
 package com.manning.sbia.ch08.skip;
 
-import static org.mockito.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -85,16 +87,17 @@ public class SkipBehaviorTest extends AbstractRobustnessTest {
 		configureServiceForRead(service, read);
 		
 		final String toFailWriting = "7";
-		doNothing().when(service).writing(argThat(new BaseMatcher<String>() {
-			@Override
-			public boolean matches(Object input) {				
-				return !toFailWriting.equals(input);
-			}
-			
-			@Override
-			public void describeTo(Description desc) { }
-			
-		}));
+		doNothing().when(service).writing(argThat(new BaseMatcher<>() {
+            @Override
+            public boolean matches(Object input) {
+                return !toFailWriting.equals(input);
+            }
+
+            @Override
+            public void describeTo(Description desc) {
+            }
+
+        }));
 		doThrow(new DataIntegrityViolationException("")).when(service).writing(toFailWriting);
 			
 		JobExecution exec = jobLauncher.run(
@@ -119,16 +122,17 @@ public class SkipBehaviorTest extends AbstractRobustnessTest {
 		configureServiceForRead(service, read);
 		
 		final String toFailProcessing = "7";
-		doNothing().when(service).processing(argThat(new BaseMatcher<String>() {
-			@Override
-			public boolean matches(Object input) {				
-				return !toFailProcessing.equals(input);
-			}
-			
-			@Override
-			public void describeTo(Description desc) { }
-			
-		}));
+		doNothing().when(service).processing(argThat(new BaseMatcher<>() {
+            @Override
+            public boolean matches(Object input) {
+                return !toFailProcessing.equals(input);
+            }
+
+            @Override
+            public void describeTo(Description desc) {
+            }
+
+        }));
 		doThrow(new DataIntegrityViolationException("")).when(service).processing(toFailProcessing);
 			
 		doNothing().when(service).writing(anyString());
@@ -167,16 +171,17 @@ public class SkipBehaviorTest extends AbstractRobustnessTest {
 			.thenReturn(null);
 		
 		final String toFailWriting = "9";
-		doNothing().when(service).writing(argThat(new BaseMatcher<String>() {
-			@Override
-			public boolean matches(Object input) {				
-				return !toFailWriting.equals(input);
-			}
-			
-			@Override
-			public void describeTo(Description desc) { }
-			
-		}));
+		doNothing().when(service).writing(argThat(new BaseMatcher<>() {
+            @Override
+            public boolean matches(Object input) {
+                return !toFailWriting.equals(input);
+            }
+
+            @Override
+            public void describeTo(Description desc) {
+            }
+
+        }));
 		doThrow(new RuntimeException("")).when(service).writing(toFailWriting);
 		
 		JobExecution exec = jobLauncher.run(

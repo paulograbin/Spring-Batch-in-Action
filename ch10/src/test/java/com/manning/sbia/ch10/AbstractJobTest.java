@@ -6,7 +6,7 @@ package com.manning.sbia.ch10;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -16,7 +16,6 @@ import javax.sql.DataSource;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.Job;
@@ -169,15 +168,11 @@ public abstract class AbstractJobTest {
 			.thenReturn(true);
 		
 		when(readWriteProductsTasklet.execute(any(StepContribution.class), any(ChunkContext.class)))
-			.thenAnswer(new Answer<RepeatStatus>() {
-				@Override
-				public RepeatStatus answer(InvocationOnMock invocation)
-						throws Throwable {
-					StepContribution contribution = (StepContribution) invocation.getArguments()[0];
-					contribution.incrementReadSkipCount();
-					return RepeatStatus.FINISHED;
-				}
-			});
+			.thenAnswer((Answer<RepeatStatus>) invocation -> {
+                StepContribution contribution = (StepContribution) invocation.getArguments()[0];
+                contribution.incrementReadSkipCount();
+                return RepeatStatus.FINISHED;
+            });
 	}
 	
 	@Autowired
@@ -227,7 +222,7 @@ public abstract class AbstractJobTest {
 		assertNull(importMetadataHolder.get());
 	}
 	
-	private void recordBehaviorNoDownloadedFile() throws Exception {
+	private void recordBehaviorNoDownloadedFile() {
 		when(batchService.extractMetadata(workingDirectory))
 			.thenReturn(metadata);		
 		when(batchService.exists(archiveFile))

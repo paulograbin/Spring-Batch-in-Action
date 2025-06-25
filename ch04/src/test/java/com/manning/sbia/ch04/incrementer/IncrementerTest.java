@@ -3,7 +3,7 @@
  */
 package com.manning.sbia.ch04.incrementer;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import org.junit.Assert;

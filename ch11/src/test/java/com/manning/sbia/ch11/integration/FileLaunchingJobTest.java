@@ -54,7 +54,7 @@ public class FileLaunchingJobTest {
 		
 		JobExecution jobExecution = receiveMessage();
 		Assert.assertEquals(JOB_NAME,jobExecution.getJobInstance().getJobName());
-		Assert.assertTrue(jobExecution.getJobInstance().getJobParameters().isEmpty());		
+		Assert.assertTrue(jobExecution.getJobParameters().isEmpty());
 	}
 	
 	@Test public void fileLaunchingJobSomeParams() throws Exception {
@@ -62,8 +62,8 @@ public class FileLaunchingJobTest {
 		
 		JobExecution jobExecution = receiveMessage();
 		Assert.assertEquals(JOB_NAME,jobExecution.getJobInstance().getJobName());
-		Assert.assertFalse(jobExecution.getJobInstance().getJobParameters().isEmpty());
-		Assert.assertEquals("2010-07-23",jobExecution.getJobInstance().getJobParameters().getString("date"));
+		Assert.assertFalse(jobExecution.getJobParameters().isEmpty());
+		Assert.assertEquals("2010-07-23",jobExecution.getJobParameters().getString("date"));
 	}
 
 	private void sendFile(String filename,String launchingString) throws IOException {

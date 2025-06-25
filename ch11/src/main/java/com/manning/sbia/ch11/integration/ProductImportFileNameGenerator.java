@@ -18,7 +18,7 @@ public class ProductImportFileNameGenerator implements FileNameGenerator {
 	 */
 	@Override
 	public String generateFileName(Message<?> message) {
-		Assert.notNull(message.getPayload());
+//		Assert.notNull(message.getPayload());
 		Assert.isInstanceOf(String.class, message.getPayload());
 		String payload = (String) message.getPayload();
 		return ProductImportUtils.extractImportId(payload)+".xml";

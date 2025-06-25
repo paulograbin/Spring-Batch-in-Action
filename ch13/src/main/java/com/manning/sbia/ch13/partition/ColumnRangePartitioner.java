@@ -12,8 +12,8 @@ public class ColumnRangePartitioner extends JdbcDaoSupport implements Partitione
 	private String column;
 
 	public Map<String, ExecutionContext> partition(int gridSize) {
-		int min = getJdbcTemplate().queryForInt("SELECT MIN(" + column + ") from " + table);
-		int max = getJdbcTemplate().queryForInt("SELECT MAX(" + column + ") from " + table);
+		int min = getJdbcTemplate().queryForObject("SELECT MIN(" + column + ") from " + table, Integer.class);
+		int max = getJdbcTemplate().queryForObject("SELECT MAX(" + column + ") from " + table, Integer.class);
 		int targetSize = (max - min) / gridSize + 1;
 
 		Map<String, ExecutionContext> result = new HashMap<String, ExecutionContext>();

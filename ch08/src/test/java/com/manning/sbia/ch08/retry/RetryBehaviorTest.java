@@ -3,9 +3,8 @@
  */
 package com.manning.sbia.ch08.retry;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -13,6 +12,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -25,13 +25,12 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.retry.RetryCallback;
-import org.springframework.batch.retry.RetryContext;
-import org.springframework.batch.retry.RetryListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.dao.DeadlockLoserDataAccessException;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.retry.RetryCallback;
+import org.springframework.retry.RetryContext;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.manning.sbia.ch08.AbstractRobustnessTest;
@@ -47,7 +46,7 @@ public class RetryBehaviorTest extends AbstractRobustnessTest {
 	private Job retryPolicyJob;
 	
 	@Autowired
-	private RetryListener mockRetryListener;
+	private org.springframework.retry.RetryListener mockRetryListener;
 	
 	@Before public void init() {
 		reset(mockRetryListener);
@@ -145,16 +144,17 @@ public class RetryBehaviorTest extends AbstractRobustnessTest {
 		configureServiceForRead(service, read);
 		
 		final String toFailWriting = "7";
-		doNothing().when(service).writing(argThat(new BaseMatcher<String>() {
-			@Override
-			public boolean matches(Object input) {				
-				return !toFailWriting.equals(input);
-			}
-			
-			@Override
-			public void describeTo(Description desc) { }
-			
-		}));
+		doNothing().when(service).writing(argThat(new BaseMatcher<>() {
+            @Override
+            public boolean matches(Object input) {
+                return !toFailWriting.equals(input);
+            }
+
+            @Override
+            public void describeTo(Description desc) {
+            }
+
+        }));
 		
 		doThrow(new DeadlockLoserDataAccessException("",null))
 			.doThrow(new DeadlockLoserDataAccessException("",null))
@@ -166,11 +166,11 @@ public class RetryBehaviorTest extends AbstractRobustnessTest {
 			job, 
 			new JobParametersBuilder().addLong("time", System.currentTimeMillis()).toJobParameters()
 		);
-		Assert.assertEquals(ExitStatus.COMPLETED,exec.getExitStatus());
-		verify(service,times(5+5+2+1)).reading();
-		verify(service,times(5+5+1+1+2)).processing(anyString());
-		verify(service,times(5+2+2+5+2)).writing(anyString());
-		verify(mockRetryListener,times(2)).onError(any(RetryContext.class), any(RetryCallback.class), any(Throwable.class));
+		Assert.assertEquals(ExitStatus.COMPLETED, exec.getExitStatus());
+		verify(service, times(5 + 5 + 2 + 1)).reading();
+		verify(service, times(5 + 5 + 1 + 1 + 2)).processing(anyString());
+		verify(service, times(5 + 2 + 2 + 5 + 2)).writing(anyString());
+		verify(mockRetryListener, times(2)).onError(any(RetryContext.class), any(RetryCallback.class), any(Throwable.class));
 		assertRead(read, exec);
 		assertWrite(read, exec);
 		assertReadSkip(0, exec);
@@ -185,16 +185,17 @@ public class RetryBehaviorTest extends AbstractRobustnessTest {
 		configureServiceForRead(service, read);
 		
 		final String toFailWriting = "7";
-		doNothing().when(service).writing(argThat(new BaseMatcher<String>() {
-			@Override
-			public boolean matches(Object input) {				
-				return !toFailWriting.equals(input);
-			}
-			
-			@Override
-			public void describeTo(Description desc) { }
-			
-		}));
+		doNothing().when(service).writing(argThat(new BaseMatcher<>() {
+            @Override
+            public boolean matches(Object input) {
+                return !toFailWriting.equals(input);
+            }
+
+            @Override
+            public void describeTo(Description desc) {
+            }
+
+        }));
 		doThrow(new OptimisticLockingFailureException("",null)).when(service).writing(toFailWriting);
 			
 		JobExecution exec = jobLauncher.run(
@@ -219,16 +220,17 @@ public class RetryBehaviorTest extends AbstractRobustnessTest {
 		configureServiceForRead(service, read);
 		
 		final String toFailProcessing = "7";
-		doNothing().when(service).processing(argThat(new BaseMatcher<String>() {
-			@Override
-			public boolean matches(Object input) {				
-				return !toFailProcessing.equals(input);
-			}
-			
-			@Override
-			public void describeTo(Description desc) { }
-			
-		}));
+		doNothing().when(service).processing(argThat(new BaseMatcher<>() {
+            @Override
+            public boolean matches(Object input) {
+                return !toFailProcessing.equals(input);
+            }
+
+            @Override
+            public void describeTo(Description desc) {
+            }
+
+        }));
 		doThrow(new DeadlockLoserDataAccessException("",null)).when(service).processing(toFailProcessing);
 			
 		doNothing().when(service).writing(anyString());
@@ -255,16 +257,17 @@ public class RetryBehaviorTest extends AbstractRobustnessTest {
 		configureServiceForRead(service, read);
 		
 		final String toFailProcessing = "7";
-		doNothing().when(service).processing(argThat(new BaseMatcher<String>() {
-			@Override
-			public boolean matches(Object input) {				
-				return !toFailProcessing.equals(input);
-			}
-			
-			@Override
-			public void describeTo(Description desc) { }
-			
-		}));
+		doNothing().when(service).processing(argThat(new BaseMatcher<>() {
+            @Override
+            public boolean matches(Object input) {
+                return !toFailProcessing.equals(input);
+            }
+
+            @Override
+            public void describeTo(Description desc) {
+            }
+
+        }));
 		doThrow(new OptimisticLockingFailureException("",null)).when(service).processing(toFailProcessing);
 			
 		doNothing().when(service).writing(anyString());
@@ -291,16 +294,17 @@ public class RetryBehaviorTest extends AbstractRobustnessTest {
 		configureServiceForRead(service, read);
 		
 		final String toFailProcessing = "7";
-		doNothing().when(service).processing(argThat(new BaseMatcher<String>() {
-			@Override
-			public boolean matches(Object input) {				
-				return !toFailProcessing.equals(input);
-			}
-			
-			@Override
-			public void describeTo(Description desc) { }
-			
-		}));
+		doNothing().when(service).processing(argThat(new BaseMatcher<>() {
+            @Override
+            public boolean matches(Object input) {
+                return !toFailProcessing.equals(input);
+            }
+
+            @Override
+            public void describeTo(Description desc) {
+            }
+
+        }));
 		doThrow(new OptimisticLockingFailureException("",null))
 			.doThrow(new OptimisticLockingFailureException("",null))
 			.doNothing()
@@ -338,7 +342,7 @@ public class RetryBehaviorTest extends AbstractRobustnessTest {
 			private int countConcurrency = 0;
 			private int countDeadlock = 0;
 			@Override
-			public Void answer(InvocationOnMock invocation) throws Throwable {
+			public Void answer(InvocationOnMock invocation) {
 				String item = (String) invocation.getArguments()[0];
 				if(toFailProcessingConcurrency.equals(item) &&
 					countConcurrency < maxAttemptsConcurrency 

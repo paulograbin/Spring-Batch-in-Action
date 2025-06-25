@@ -19,13 +19,8 @@ public class ExceptionSkipPolicy implements SkipPolicy {
 		this.exceptionClassToSkip = exceptionClassToSkip;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.batch.core.step.skip.SkipPolicy#shouldSkip(java.lang.Throwable, int)
-	 */
 	@Override
-	public boolean shouldSkip(Throwable t, int skipCount)
-			throws SkipLimitExceededException {
+	public boolean shouldSkip(Throwable t, long skipCount) throws SkipLimitExceededException {
 		return exceptionClassToSkip.isAssignableFrom(t.getClass());
 	}
-	
 }

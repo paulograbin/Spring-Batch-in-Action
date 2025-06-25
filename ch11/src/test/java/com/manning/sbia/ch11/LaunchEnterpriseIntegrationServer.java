@@ -6,10 +6,9 @@ package com.manning.sbia.ch11;
 import java.io.File;
 
 import org.apache.commons.io.FileUtils;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 
 /**
  * @author acogoluegnes
@@ -26,15 +25,13 @@ public class LaunchEnterpriseIntegrationServer {
 		}
 		System.setProperty("product.import.pickup.dir", PICKUP_DIR);
 		Server server = new Server();
-		Connector connector = new SelectChannelConnector();
-		connector.setPort(8080);
-		connector.setHost("127.0.0.1");
+		Connector connector = new ServerConnector(server);
 		server.addConnector(connector);
 
-		WebAppContext wac = new WebAppContext();
-		wac.setContextPath("/enterpriseintegration");
-		wac.setWar("./src/main/webapp");
-		server.setHandler(wac);
+//		WebAppContext wac = new WebAppContext();
+//		wac.setContextPath("/enterpriseintegration");
+//		wac.setWar("./src/main/webapp");
+//		server.setHandler(wac);
 		server.setStopAtShutdown(true);
 		server.start();
 		

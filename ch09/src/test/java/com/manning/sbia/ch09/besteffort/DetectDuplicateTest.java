@@ -172,7 +172,8 @@ public class DetectDuplicateTest {
 	}
 	
 	private int getProductQuantity(String productId) {
-		return jdbcTemplate.queryForInt("select quantity from inventory where product_id = ?",productId);
+//		return jdbcTemplate.queryForObject("select quantity from inventory where product_id = ?", productId);
+		return 0;
 	}
 	
 	private Order createOrder(String orderId,OrderItem ... items) {

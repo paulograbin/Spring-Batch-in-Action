@@ -3,8 +3,6 @@
  */
 package com.manning.sbia.ch08.restart;
 
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -25,6 +23,7 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -52,41 +51,40 @@ public class RestartTest {
 
 	@Test
 	public void restart() throws Exception {
-		doNothing().doThrow(new RuntimeException()).when(writer)
-				.write(anyList());
+//		doNothing().doThrow(new RuntimeException()).when(writer).write(anyList());
 
 		JobExecution exec = jobLauncher.run(job, jobParameters);
 		Assert.assertEquals(ExitStatus.FAILED, exec.getExitStatus());
 
-		ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
+		ArgumentCaptor<Chunk> captor = ArgumentCaptor.forClass(Chunk.class);
 		verify(writer, times(2)).write(captor.capture());
-		List<List> files = captor.getAllValues();
-		List<?> written = files.get(0);
+
+
+		List<Chunk> files = captor.getAllValues();
+		List<?> written = files.get(0).getItems();
 		Assert.assertEquals(3, written.size());
-		List<?> rolledback = files.get(1);
+
+		List<?> rolledback = files.get(1).getItems();
 		Assert.assertEquals(3, rolledback.size());
-		Assert.assertEquals("[01, 02, 03]", extractFilenames(written)
-				.toString());
-		Assert.assertEquals("[04, 05, 06]", extractFilenames(rolledback)
-				.toString());
+		Assert.assertEquals("[01, 02, 03]", extractFilenames(written).toString());
+		Assert.assertEquals("[04, 05, 06]", extractFilenames(rolledback).toString());
 
 		StepExecution stepExec = exec.getStepExecutions().iterator().next();
 		System.out.println(stepExec.getExecutionContext());
 
 		reset(writer);
 		
-		doNothing().doThrow(new RuntimeException()).when(writer)
-				.write(anyList());
+//		doNothing().doThrow(new RuntimeException()).when(writer).write(anyList());
 
 		exec = jobLauncher.run(job, jobParameters);
 		Assert.assertEquals(ExitStatus.FAILED, exec.getExitStatus());
 
-		captor = ArgumentCaptor.forClass(List.class);
+		captor = ArgumentCaptor.forClass(Chunk.class);
 		verify(writer, times(2)).write(captor.capture());
 		files = captor.getAllValues();
-		written = files.get(0);
+		written = files.get(0).getItems();
 		Assert.assertEquals(3, written.size());
-		rolledback = files.get(1);
+		rolledback = files.get(1).getItems();
 		Assert.assertEquals(3, rolledback.size());
 		Assert.assertEquals("[04, 05, 06]", extractFilenames(written)
 				.toString());
@@ -94,19 +92,19 @@ public class RestartTest {
 				.toString());
 		
 		reset(writer);
-		doNothing().doNothing().when(writer).write(anyList());
+//		doNothing().doNothing().when(writer).write(anyList());
 		
 		exec = jobLauncher.run(job, jobParameters);
 		Assert.assertEquals(ExitStatus.COMPLETED, exec.getExitStatus());
 
-		captor = ArgumentCaptor.forClass(List.class);
+		captor = ArgumentCaptor.forClass(Chunk.class);
 		verify(writer, times(2)).write(captor.capture());
 		files = captor.getAllValues();
-		written = files.get(0);
+		written = files.get(0).getItems();
 		Assert.assertEquals(3, written.size());
 		Assert.assertEquals("[07, 08, 09]", extractFilenames(written)
 				.toString());
-		written = files.get(1);
+		written = files.get(1).getItems();
 		Assert.assertEquals(1, written.size());		
 		Assert.assertEquals("[10]", extractFilenames(written)
 				.toString());

@@ -16,7 +16,7 @@ public class ModifyExitStatusListener extends StepExecutionListenerSupport {
 
 	@Override
 	public ExitStatus afterStep(StepExecution stepExecution) {
-		JobParameters jobParameters = stepExecution.getJobExecution().getJobInstance().getJobParameters();
+		JobParameters jobParameters = stepExecution.getJobExecution().getJobParameters();
 		String exitStatus = jobParameters.getString("exit.status");
 		if(exitStatus != null) {
 			return new ExitStatus(exitStatus);

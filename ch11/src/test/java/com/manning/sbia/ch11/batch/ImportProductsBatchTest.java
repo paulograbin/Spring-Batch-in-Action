@@ -69,7 +69,7 @@ public class ImportProductsBatchTest {
 	}
 	
 	private int countProducts() {
-		return jdbcTemplate.queryForInt("select count(1) from product");
+		return jdbcTemplate.queryForObject("select count(1) from product", Integer.class);
 	}
 
 	private String productsFilePath(String importId) {

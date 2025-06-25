@@ -17,10 +17,12 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Optional;
 
 /**
  * Integration with mock.
@@ -36,7 +38,7 @@ public class WholeBatchTest {
   @Autowired
   private JobLauncherTestUtils jobLauncherTestUtils;
   @Autowired
-  private SimpleJdbcTemplate jdbcTemplate;
+  private JdbcTemplate jdbcTemplate;
 
   @Test
   @DirtiesContext
@@ -51,6 +53,6 @@ public class WholeBatchTest {
     StepExecution setpExec = exec.getStepExecutions().iterator().next();
     assertEquals(2, setpExec.getFilterCount());
     assertEquals(6, setpExec.getWriteCount());
-    assertEquals(6, jdbcTemplate.queryForInt("SELECT COUNT(*) from PRODUCT"));
+    assertEquals(Optional.of(6), jdbcTemplate.queryForObject("SELECT COUNT(*) from PRODUCT", Integer.class));
   }
 }

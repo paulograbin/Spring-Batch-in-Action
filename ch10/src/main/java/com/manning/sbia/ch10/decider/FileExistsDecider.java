@@ -24,7 +24,7 @@ public class FileExistsDecider implements JobExecutionDecider {
 	@Override
 	public FlowExecutionStatus decide(JobExecution jobExecution,
 			StepExecution stepExecution) {
-		String targetFile = jobExecution.getJobInstance().getJobParameters().getString("archiveFile");
+		String targetFile = jobExecution.getJobParameters().getString("archiveFile");
 		if(batchService.exists(targetFile)) {
 			return new FlowExecutionStatus("FILE EXISTS");
 		} else {
