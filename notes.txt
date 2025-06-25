@@ -21,3 +21,15 @@ chunk processing: suited for batch apps, best practice in terms of memory consum
 
 main components: reader, processor, writer
 
+
+job has two aspects:
+- static for job modeling
+- dynamic for runtime management
+
+Job is a sequence of steps
+
+
+a job starts in response to an event:
+- scheduler like cron
+- a script that launches the process
+- http reques to a controller
