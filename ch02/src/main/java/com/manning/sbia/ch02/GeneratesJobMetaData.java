@@ -36,8 +36,7 @@ public class GeneratesJobMetaData {
 	public static void main(String[] args) throws Exception {
 		ApplicationContext ctx = new ClassPathXmlApplicationContext(
 			"/import-products-job-context.xml",
-			"/com/manning/sbia/ch02/batch-infrastructure-context.xml",
-			"/com/manning/sbia/ch02/connect-database-context.xml"
+			"/com/manning/sbia/ch02/batch-infrastructure-context.xml"
 		);
 		
 		truncate(ctx);
