@@ -33,3 +33,8 @@ a job starts in response to an event:
 - scheduler like cron
 - a script that launches the process
 - http reques to a controller
+
+
+job: a sequence of steps
+job instance: a specific run of a job
+job execution: the execution of a job instance with result success or failure
