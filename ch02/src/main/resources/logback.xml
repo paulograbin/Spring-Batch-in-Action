@@ -6,7 +6,8 @@
 		</encoder>
 	</appender>
 	
-	<logger name="org.springframework.batch" level="warn" />
+	<logger name="org.springframework.batch" level="trace" />
+	<logger name="org.mortbay" level="trace" />
 
 	<root level="error">
 		<appender-ref ref="STDOUT" />
