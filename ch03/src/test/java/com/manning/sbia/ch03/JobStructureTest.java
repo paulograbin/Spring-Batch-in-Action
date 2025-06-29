@@ -10,7 +10,7 @@ public class JobStructureTest extends AbstractJobStructureTest {
 
     @Test
     public void delimitedJob() throws Exception {
-        jobLauncher.run(job, new JobParameters());
+        jobLauncher.run(importProductsJob, new JobParameters());
     }
 
 }
