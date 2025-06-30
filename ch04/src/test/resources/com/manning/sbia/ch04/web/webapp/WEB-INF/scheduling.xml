@@ -13,9 +13,7 @@
 	<task:scheduler id="scheduler" />
 	
 	<task:scheduled-tasks scheduler="scheduler">
-		<task:scheduled ref="launcher" method="launch" 
-			fixed-delay="1000"
-		/>
+		<task:scheduled ref="launcher" method="launch" fixed-delay="1000"/>
 	</task:scheduled-tasks>
 
 
