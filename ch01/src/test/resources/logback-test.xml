@@ -1,14 +1,18 @@
 <configuration>
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
-			</pattern>
-		</encoder>
-	</appender>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
 
-	<logger name="org.springframework.batch" level="off" />
+    <logger name="com.manning.sbia.ch01.batch" level="trace"/>
+<!--    <logger name="org.springframework.batch" level="trace"/>-->
+<!--    <logger name="org.mortbay" level="trace"/>-->
+<!--    <logger name="org.springframework.jdbc.datasource" level="trace"/>-->
 
-	<root level="error">
-		<appender-ref ref="STDOUT" />
-	</root>
+
+    <root level="error">
+        <appender-ref ref="STDOUT"/>
+    </root>
 </configuration>
