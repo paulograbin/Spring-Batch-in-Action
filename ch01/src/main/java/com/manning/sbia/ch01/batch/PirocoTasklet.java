@@ -10,16 +10,16 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 public class PirocoTasklet implements Tasklet {
 
-    int count = 0;
-
     private static final Logger LOG = LoggerFactory.getLogger(PirocoTasklet.class);
+
+    int count = 0;
 
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
         LOG.info("Entrou...");
 
         if (count <= 3) {
-            System.out.println(count);
+            LOG.warn("{}", count);
             count++;
             return RepeatStatus.CONTINUABLE;
         }
