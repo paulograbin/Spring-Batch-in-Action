@@ -31,10 +31,15 @@
 		<property name="targetDirectory" value="#{jobParameters['targetDirectory']}" />
 		<property name="targetFile" value="#{jobParameters['targetFile']}" />
 	</bean>
+
+	<bean id="skippedLinesLogger" class="com.manning.sbia.ch01.batch.SkippedLineLogger"/>
 	
 	<bean id="reader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
 		<property name="resource" value="file:#{jobParameters['targetDirectory']+jobParameters['targetFile']}" />
 		<property name="linesToSkip" value="1" />
+		<property name="comments" value="#"/>
+		<property name="encoding" value="UTF-8"/>
+		<property name="skippedLinesCallback" ref="skippedLinesLogger"/>
 		<property name="lineMapper">
 			<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
 				<property name="lineTokenizer">
