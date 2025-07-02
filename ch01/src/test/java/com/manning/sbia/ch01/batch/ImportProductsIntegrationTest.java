@@ -52,7 +52,7 @@ public class ImportProductsIntegrationTest {
 			.toJobParameters()
 		);
 		int nbOfNewProducts = 7;
-//		Assert.assertEquals(initial+nbOfNewProducts,jdbcTemplate.queryForInt("select count(1) from product"));
+		Assert.assertEquals(initial+nbOfNewProducts,jdbcTemplate.queryForInt("select count(1) from product"));
 	}
 	
 	@Test public void importProductsWithErrors() throws Exception {
