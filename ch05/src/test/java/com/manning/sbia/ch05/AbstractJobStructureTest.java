@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.manning.sbia.ch05;
 
 import java.util.List;
@@ -14,10 +11,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.manning.sbia.ch05.Product;
 
-/**
- * @author templth
- *
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 public abstract class AbstractJobStructureTest {
 
@@ -30,8 +23,7 @@ public abstract class AbstractJobStructureTest {
 	@Autowired
 	protected DummyProductItemWriter writer;
 	
-	protected Product createProduct(String id, String name,
-							String description, float price) {
+	protected Product createProduct(String id, String name, String description, float price) {
 		Product product = new Product();
 		product.setId(id);
 		product.setName(name);
