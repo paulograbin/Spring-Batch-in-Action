@@ -38,7 +38,7 @@
  		<property name="fieldSetMapper" ref="productFieldSetMapper"/>
  	</bean>
 
-	<bean id=" productLineTokenizer"
+	<bean id="productLineTokenizer"
 		class="org.springframework.batch.item.file.transform.FixedLengthTokenizer">
 		<property name="columns" value="1-9,10-35,36-50,51-56"/>
 		<property name="names" value="id,name,description,price"/>

@@ -23,8 +23,7 @@
  		</step>
  	</job>
  	
- 	<bean id="productItemReader"
-		class="org.springframework.batch.item.xml.StaxEventItemReader">
+ 	<bean id="productItemReader" class="org.springframework.batch.item.xml.StaxEventItemReader">
 		<property name="resource" value="classpath:/com/manning/sbia/ch05/input/products.xml"/>
 		<property name="fragmentRootElementName" value="product"/>
 		<property name="unmarshaller" ref="productMarshaller"/>
