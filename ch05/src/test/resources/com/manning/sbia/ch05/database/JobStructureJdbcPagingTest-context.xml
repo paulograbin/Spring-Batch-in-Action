@@ -45,17 +45,14 @@
 		<property name="rowMapper" ref="productRowMapper"/>
 	</bean>
 
-	<bean id="productQueryProvider"
-	      class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
+	<bean id="productQueryProvider" class="org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
-		<property name="selectClause"
-				value="select id, name, description, price"/>
+		<property name="selectClause" value="select id, name, description, price"/>
 		<property name="fromClause" value="from product"/>
 		<property name="sortKey" value="id"/>
 	</bean>
 
-	<bean id="productRowMapper"
-		class="com.manning.sbia.ch05.database.ProductRowMapper"/>
+	<bean id="productRowMapper" class="com.manning.sbia.ch05.database.ProductRowMapper"/>
 
 	<bean id="productItemWriter" class="com.manning.sbia.ch05.DummyProductItemWriter"/>
 

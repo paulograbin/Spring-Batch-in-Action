@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.manning.sbia.ch05;
 
 import java.io.Serializable;
@@ -9,10 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-/**
- * @author templth
- *
- */
 @Entity
 public class Product implements Serializable {
 	@Id
