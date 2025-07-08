@@ -29,80 +29,79 @@
 
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-jms</artifactId>
-			<version>3.0.1.RELEASE</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
 			<artifactId>spring-oxm</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>com.springsource.org.hibernate</artifactId>
-			<version>3.3.2.GA</version>
+			<artifactId>hibernate-core</artifactId>
+			<version>3.6.10.Final</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
-					<artifactId>com.springsource.slf4j.api</artifactId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>com.springsource.org.hibernate.annotations</artifactId>
-			<version>3.4.0.GA</version>
+			<artifactId>hibernate-annotations</artifactId>
+			<version>3.5.6-Final</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
-					<artifactId>com.springsource.slf4j.api</artifactId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>com.springsource.org.hibernate.annotations.common</artifactId>
-			<version>3.3.0.ga</version>
+			<artifactId>hibernate-commons-annotations</artifactId>
+			<version>3.2.0.Final</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
-					<artifactId>com.springsource.slf4j.api</artifactId>
+					<artifactId>slf4j-api</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>org.apache.commons</groupId>
-					<artifactId>com.springsource.org.apache.commons.logging</artifactId>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>com.springsource.org.hibernate.ejb</artifactId>
-			<version>3.4.0.GA</version>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>3.6.10.Final</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
-					<artifactId>com.springsource.slf4j.api</artifactId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-<!--		<dependency>-->
-<!--			<groupId>javax.persistence</groupId>-->
-<!--			<artifactId>javax.persistence-api</artifactId>-->
-<!--			<version>2.2</version>-->
-<!--		</dependency>-->
-
 
 		<dependency>
 			<groupId>javax.persistence</groupId>
-			<artifactId>com.springsource.javax.persistence</artifactId>
-			<version>1.99.0</version>
+			<artifactId>javax.persistence-api</artifactId>
+			<version>2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.transaction</groupId>
-			<artifactId>com.springsource.javax.transaction</artifactId>
-			<version>1.1.0</version>
+			<artifactId>javax.transaction-api</artifactId>
+			<version>1.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.ws</groupId>
@@ -110,53 +109,30 @@
 			<version>1.5.9</version>
 		</dependency>
 
-
-<!--		<dependency>-->
-<!--			<groupId>javax.jms</groupId>-->
-<!--			<artifactId>com.springsource.javax.jms</artifactId>-->
-<!--			<version>1.1.0</version>-->
-<!--		</dependency>-->
-
-
-
-
-
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
-			<artifactId>com.springsource.javax.management.j2ee</artifactId>
+			<artifactId>geronimo-j2ee-management_1.1_spec</artifactId>
 			<version>1.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
-			<artifactId>com.springsource.org.apache.activemq</artifactId>
+			<artifactId>activemq-core</artifactId>
 			<version>5.3.0</version>
 			<exclusions>
 				<exclusion>
-					<groupId>org.apache.commons</groupId>
-					<artifactId>com.springsource.org.apache.commons.logging</artifactId>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xbean</groupId>
-			<artifactId>com.springsource.org.apache.xbean.spring</artifactId>
-			<version>3.6.0</version>
+			<artifactId>xbean-spring</artifactId>
+			<version>3.6</version>
 			<exclusions>
 				<exclusion>
-					<groupId>org.apache.commons</groupId>
-					<artifactId>com.springsource.org.apache.commons.logging</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>org.springframework.core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>org.springframework.beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>org.springframework.context</artifactId>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
