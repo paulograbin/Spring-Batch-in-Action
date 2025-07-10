@@ -1,6 +1,5 @@
 PRODUCT_ID,NAME,DESCRIPTION,PRICE
-#dadsadas
-PR....210,BlackBerry 888111xxxx Pearl,,124.60
+PR....210,BlackBerry 8100 Pearl,,124.60
 PR....211,Sony Ericsson W810i,,139.45
 PR....212,Samsung MM-A900M Ace,,97.80
 PR....213,Toshiba M285-E 14,,166.20
