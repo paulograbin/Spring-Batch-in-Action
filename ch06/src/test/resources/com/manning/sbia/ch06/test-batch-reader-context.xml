@@ -18,14 +18,13 @@
         <property name="fieldSetMapper" ref="productFieldSetMapper"/>
     </bean>
 
-    <bean id=" productLineTokenizer"
+    <bean id="productLineTokenizer"
         class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
         <property name="delimiter" value=","/>
         <property name="names" value="id,name,description,price,operation"/>
     </bean>
 
-    <bean id="productFieldSetMapper"
-        class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+    <bean id="productFieldSetMapper"  class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
         <property name="targetType" value="com.manning.sbia.ch06.Product" />
     </bean>
 
