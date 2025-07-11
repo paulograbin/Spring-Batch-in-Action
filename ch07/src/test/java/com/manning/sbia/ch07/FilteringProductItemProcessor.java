@@ -1,24 +1,14 @@
-/**
- * 
- */
 package com.manning.sbia.ch07;
 
-
-import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.batch.item.ItemProcessor;
 
 import com.manning.sbia.ch01.domain.Product;
 
-/**
- * @author acogoluegnes
- *
- */
-public class FilteringProductItemProcessor implements
-		ItemProcessor<Product, Product> {
+import static org.apache.commons.lang3.math.NumberUtils.*;
 
-	/* (non-Javadoc)
-	 * @see org.springframework.batch.item.ItemProcessor#process(java.lang.Object)
-	 */
+
+public class FilteringProductItemProcessor implements ItemProcessor<Product, Product> {
+
 	@Override
 	public Product process(Product item) throws Exception {
 		return needsToBeFiltered(item) ? null : item;
@@ -27,8 +17,8 @@ public class FilteringProductItemProcessor implements
 	private boolean needsToBeFiltered(Product item) {
 		String id = item.getId();
 		String lastDigit = id.substring(id.length()-1, id.length());
-		if(NumberUtils.isDigits(lastDigit)) {
-			return NumberUtils.toInt(lastDigit) % 2 == 1;
+		if(isDigits(lastDigit)) {
+			return toInt(lastDigit) % 2 == 1;
 		} else {
 			return false;
 		}		 
