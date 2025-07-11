@@ -8,17 +8,6 @@
 
 	<import resource="DeclarativeValidationBase-context.xml" />
 
-	<bean id="validator"
-		class="org.springframework.batch.item.validator.SpringValidator">
-		<property name="validator">
-			<bean class="org.springmodules.validation.valang.ValangValidator">
-				<property name="valang">
-					<value><![CDATA[
-                     {price : ? >= 0 : 'Product price cannot be negative!'}
-                    ]]></value>
-				</property>
-			</bean>
-		</property>
-	</bean>
+	<bean id="validator" class="com.manning.sbia.ch07.validation.SimpleProductValidator" />
 
 </beans>

@@ -20,32 +20,12 @@
 			<version>${project.version}</version>
 		</dependency>
 
+		<!-- Spring Modules Valang validator has been replaced with Bean Validation -->
+		<!-- The ValangValidationTest demonstrates legacy validation but is no longer supported -->
 		<dependency>
-			<groupId>net.java.dev.springmodules</groupId>
-			<artifactId>com.springsource.org.springmodules.validation.validator</artifactId>
-			<version>0.9.0</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>com.springsource.org.hibernate.validator</artifactId>
-					<groupId>org.hibernate</groupId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.commons</groupId>
-					<artifactId>com.springsource.org.apache.commons.logging</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>org.springframework.beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>org.springframework.context</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>org.springframework.core</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>2.0.1.Final</version>
 		</dependency>
 
 		<!-- spring modules validation depends on some Web artifacts! -->

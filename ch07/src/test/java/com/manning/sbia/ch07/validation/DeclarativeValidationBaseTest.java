@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.manning.sbia.ch07.validation;
 
@@ -21,43 +21,46 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 public abstract class DeclarativeValidationBaseTest {
 
-	@Autowired
-	private JobLauncher jobLauncher;
-	
-	@Autowired
-	private Job job;
-	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-	
-	@Before public void setUpt() {
-		jdbcTemplate.update("delete from product");
-	}
+    @Autowired
+    private JobLauncher jobLauncher;
 
-	@Test public void declarativeValidationSkip() throws Exception {
-		JobExecution exec = jobLauncher.run(job, new JobParametersBuilder()
-			.addString("inputFile", "classpath:/products-with-negative-price.txt")
-			.addString("filter", "false")
-			.toJobParameters()
-		);
-		Assert.assertEquals(ExitStatus.COMPLETED, exec.getExitStatus());
-		StepExecution stepExecution = exec.getStepExecutions().iterator().next();
-		Assert.assertEquals(0,stepExecution.getFilterCount());
-		Assert.assertEquals(3,stepExecution.getProcessSkipCount());
-		Assert.assertEquals(5,stepExecution.getWriteCount());	
-	}	
-	
-	@Test public void declarativeValidationFilter() throws Exception {
-		JobExecution exec = jobLauncher.run(job, new JobParametersBuilder()
-			.addString("inputFile", "classpath:/products-with-negative-price.txt")
-			.addString("filter", "true")
-			.toJobParameters()
-		);
-		Assert.assertEquals(ExitStatus.COMPLETED, exec.getExitStatus());
-		StepExecution stepExecution = exec.getStepExecutions().iterator().next();
-		Assert.assertEquals(3,stepExecution.getFilterCount());
-		Assert.assertEquals(0,stepExecution.getProcessSkipCount());
-		Assert.assertEquals(5,stepExecution.getWriteCount());
-	}	
-	
+    @Autowired
+    private Job job;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Before
+    public void setUpt() {
+        jdbcTemplate.update("delete from product");
+    }
+
+    @Test
+    public void declarativeValidationSkip() throws Exception {
+        JobExecution exec = jobLauncher.run(job, new JobParametersBuilder()
+                .addString("inputFile", "classpath:/products-with-negative-price.txt")
+                .addString("filter", "false")
+                .toJobParameters()
+        );
+        Assert.assertEquals(ExitStatus.COMPLETED, exec.getExitStatus());
+        StepExecution stepExecution = exec.getStepExecutions().iterator().next();
+        Assert.assertEquals(0, stepExecution.getFilterCount());
+        Assert.assertEquals(3, stepExecution.getProcessSkipCount());
+        Assert.assertEquals(5, stepExecution.getWriteCount());
+    }
+
+    @Test
+    public void declarativeValidationFilter() throws Exception {
+        JobExecution exec = jobLauncher.run(job, new JobParametersBuilder()
+                .addString("inputFile", "classpath:/products-with-negative-price.txt")
+                .addString("filter", "true")
+                .toJobParameters()
+        );
+        Assert.assertEquals(ExitStatus.COMPLETED, exec.getExitStatus());
+        StepExecution stepExecution = exec.getStepExecutions().iterator().next();
+        Assert.assertEquals(3, stepExecution.getFilterCount());
+        Assert.assertEquals(0, stepExecution.getProcessSkipCount());
+        Assert.assertEquals(5, stepExecution.getWriteCount());
+    }
+
 }
