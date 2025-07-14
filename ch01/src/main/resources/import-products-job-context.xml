@@ -13,16 +13,30 @@
 		</step>
 
 		<step id="piroco" next="readWriteProducts">
-			<tasklet ref="pirocoTask"  />
+			<tasklet ref="pirocoTask" />
+
 		</step>
 
 		<step id="readWriteProducts">
 			<tasklet>
-				<chunk reader="reader" writer="writer" commit-interval="3">
+				<chunk reader="reader" processor="randomErrorProcessor" writer="writer" commit-interval="3" skip-limit="3">
+					<skippable-exception-classes>
+						<include class="java.lang.RuntimeException"/>
+					</skippable-exception-classes>
+					<listeners>
+						<listener ref="myCustomSkipListerner"/>
+					</listeners>
 				</chunk>
+				<listeners>
+					<listener ref="myCustomSkipListerner"/>
+				</listeners>
 			</tasklet>
 		</step>
 	</job>
+
+	<bean id="myCustomSkipListerner" class="com.manning.sbia.ch01.batch.MyCustomerListener"/>
+
+	<bean id="randomErrorProcessor" class="com.manning.sbia.ch01.batch.RandomErrorProcessor"/>
 
 	<bean id="pirocoTask" class="com.manning.sbia.ch01.batch.PirocoTasklet" scope="step"/>
 
@@ -58,5 +72,7 @@
 	<bean id="writer" class="com.manning.sbia.ch01.batch.ProductJdbcItemWriter">
 		<constructor-arg ref="dataSource" />
 	</bean>
+
+
 
 </beans>
