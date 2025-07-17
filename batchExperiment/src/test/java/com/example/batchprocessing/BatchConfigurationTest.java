@@ -19,7 +19,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 
 @ActiveProfiles("test")
-@TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
         DirtiesContextTestExecutionListener.class})
 // This is to avoid clashing of several JobRepository instances using the same data source for several test classes
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
