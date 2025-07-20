@@ -1,0 +1,16 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{dd/MM/yyyy HH:mm:ss.SSS} %highlight(%-5level) ${PID} [%thread] %cyan(%logger) %method-%L: %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.example.batchprocessing" level="trace"/>
+    <logger name="org.springframework.batch" level="trace"/>
+    <logger name="org.springframework.jdbc.datasource" level="trace"/>
+
+
+    <root level="error">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
