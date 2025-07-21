@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.retry.policy.MaxAttemptsRetryPolicy;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -55,22 +56,28 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Job importUserJob(JobRepository jobRepository, Step decompressStep, Step step2, JobCompletionNotificationListener listener) {
+    public Job importUserJob(JobRepository jobRepository, Step decompressStep, Step step1, Step pirocoStep, JobCompletionNotificationListener listener) {
         return new JobBuilder("importUserJob", jobRepository)
                 .listener(listener)
-                .start(decompressStep)
-//                .start(step1)
-//                .next(step2)
+//                .start(decompressStep)
+                .start(step1)
+//                .next(pirocoStep)
                 .build();
     }
 
     @Bean
     public Step step1(JobRepository jobRepository, DataSourceTransactionManager transactionManager, FlatFileItemReader<Person> reader, PersonItemProcessor processor, JdbcBatchItemWriter<Person> writer) {
-        return new StepBuilder("step1", jobRepository)
+        var retryPolicy = new MaxAttemptsRetryPolicy();
+        retryPolicy.setMaxAttempts(3);
+
+        return new StepBuilder("regular-reader-processor-writer", jobRepository)
                 .<Person, Person>chunk(3, transactionManager)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
+                .faultTolerant()
+                .retryLimit(3)
+                .retryPolicy(retryPolicy)
                 .listener(chunkListener())
                 .listener(itemReaderListener())
                 .build();
@@ -112,15 +119,15 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Step step2(JobRepository jobRepository, DataSourceTransactionManager transactionManager) {
-        return new StepBuilder("step2", jobRepository)
+    public Step pirocoStep(JobRepository jobRepository, DataSourceTransactionManager transactionManager) {
+        return new StepBuilder("pirocoStep", jobRepository)
                 .tasklet(pirocoTasklet(), transactionManager)
                 .build();
     }
 
     @Bean
     public Step decompressStep(JobRepository jobRepository, DataSourceTransactionManager transactionManager) {
-        return new StepBuilder("step2", jobRepository)
+        return new StepBuilder("decompressStep", jobRepository)
                 .tasklet(decompressTasklet(), transactionManager)
                 .build();
     }
