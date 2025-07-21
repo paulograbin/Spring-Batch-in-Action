@@ -11,11 +11,11 @@ public class PauloCustomChunkListener implements ChunkListener {
 
     @Override
     public void beforeChunk(ChunkContext context) {
-        LOG.info("before");
+        LOG.info("before chunk");
     }
 
     @Override
     public void afterChunk(ChunkContext context) {
-        LOG.info("afterChunk");
+        LOG.info("after chunk");
     }
 }

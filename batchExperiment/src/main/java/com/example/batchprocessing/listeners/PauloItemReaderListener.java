@@ -7,16 +7,16 @@ import org.springframework.batch.core.ItemReadListener;
 
 public class PauloItemReaderListener implements ItemReadListener<Person> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PauloCustomChunkListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PauloItemReaderListener.class);
 
 
     @Override
     public void afterRead(Person item) {
-        LOG.info("afterRead {}", item);
+        LOG.info("after item read {}", item);
     }
 
     @Override
     public void beforeRead() {
-        LOG.info("beforeRead");
+        LOG.info("before item read ");
     }
 }
