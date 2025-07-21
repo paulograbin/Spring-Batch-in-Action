@@ -1,9 +1,11 @@
 package com.example.batchprocessing;
 
+import com.example.batchprocessing.exceptions.RandomOcurringException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.batch.item.ItemProcessor;
+
+import java.util.Random;
 
 public class PersonItemProcessor implements ItemProcessor<Person, Person> {
 
@@ -19,6 +21,14 @@ public class PersonItemProcessor implements ItemProcessor<Person, Person> {
 		transformedPerson.lastName = lastName;
 
 		log.info("Converting ({}) into ({})", person, transformedPerson);
+
+		int i = new Random().nextInt(10);
+		if (i > 6) {
+			log.info("Falhou!!!!!!!!!! {} - {}", person, i);
+			throw new RandomOcurringException("Agora deu " + i);
+		} else {
+			log.info("Não falhou " + i);
+		}
 
 		return transformedPerson;
 	}
