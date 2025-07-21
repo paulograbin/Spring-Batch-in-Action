@@ -1,5 +1,8 @@
 package com.example.batchprocessing;
 
+import com.example.batchprocessing.listeners.PauloCustomChunkListener;
+import com.example.batchprocessing.listeners.PauloItemReaderListener;
+import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -109,14 +112,14 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Step step2(JobRepository jobRepository, DataSourceTransactionManager transactionManager, FlatFileItemReader<Person> reader, PersonItemProcessor processor, JdbcBatchItemWriter<Person> writer) {
+    public Step step2(JobRepository jobRepository, DataSourceTransactionManager transactionManager) {
         return new StepBuilder("step2", jobRepository)
                 .tasklet(pirocoTasklet(), transactionManager)
                 .build();
     }
 
     @Bean
-    public Step decompressStep(JobRepository jobRepository, DataSourceTransactionManager transactionManager, FlatFileItemReader<Person> reader, PersonItemProcessor processor, JdbcBatchItemWriter<Person> writer) {
+    public Step decompressStep(JobRepository jobRepository, DataSourceTransactionManager transactionManager) {
         return new StepBuilder("step2", jobRepository)
                 .tasklet(decompressTasklet(), transactionManager)
                 .build();
