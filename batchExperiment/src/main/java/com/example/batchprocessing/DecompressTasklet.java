@@ -2,11 +2,8 @@ package com.example.batchprocessing;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.archivers.tar.TarUtils;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.StepContribution;
@@ -15,12 +12,10 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.zip.ZipInputStream;
 
 public class DecompressTasklet implements Tasklet {
 
@@ -39,7 +34,12 @@ public class DecompressTasklet implements Tasklet {
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         LOG.info("decompress");
 
-        if (inputDirectory.exists() && inputDirectory.getName().endsWith(".txt")) {
+        if (!inputDirectory.exists()) {
+            LOG.warn("Input directory does not exist, skipping step");
+            return RepeatStatus.FINISHED;
+        }
+
+        if (inputDirectory.getName().endsWith(".txt")) {
             LOG.info("Not compressed zip, skipping step");
 
             FileUtils.copyFile(inputDirectory, new File(targetDirectory, targetFile));
@@ -49,6 +49,10 @@ public class DecompressTasklet implements Tasklet {
 
         File[] files = inputDirectory.listFiles();
 
+        if (files.length == 0) {
+            LOG.warn("No files found in input directory, skipping step");
+            return RepeatStatus.FINISHED;
+        }
 
 
         for (File file : files) {
