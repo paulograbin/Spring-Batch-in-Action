@@ -5,10 +5,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.example.batchprocessing" level="trace"/>
-    <logger name="org.springframework.batch" level="trace"/>
-    <logger name="org.springframework.jdbc.datasource" level="trace"/>
-
+    <logger name="com.example.batchprocessing" level="all"/>
 
     <root level="error">
         <appender-ref ref="STDOUT"/>
