@@ -2,8 +2,10 @@ package com.example.batchprocessing;
 
 import com.example.batchprocessing.listeners.PauloCustomChunkListener;
 import com.example.batchprocessing.listeners.PauloItemReaderListener;
+import com.example.batchprocessing.listeners.PauloSkipListener;
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
@@ -18,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.retry.policy.AlwaysRetryPolicy;
 import org.springframework.retry.policy.MaxAttemptsRetryPolicy;
 
 import javax.sql.DataSource;
@@ -67,6 +70,8 @@ public class BatchConfiguration {
 
     @Bean
     public Step step1(JobRepository jobRepository, DataSourceTransactionManager transactionManager, FlatFileItemReader<Person> reader, PersonItemProcessor processor, JdbcBatchItemWriter<Person> writer) {
+        var alwaysRetry = new AlwaysRetryPolicy();
+
         var retryPolicy = new MaxAttemptsRetryPolicy();
         retryPolicy.setMaxAttempts(3);
 
@@ -78,11 +83,15 @@ public class BatchConfiguration {
                 .faultTolerant()
                 .retryLimit(3)
                 .retryPolicy(retryPolicy)
+                .listener(skipListener())
                 .listener(chunkListener())
                 .listener(itemReaderListener())
                 .build();
     }
 
+    private SkipListener<Person, Person> skipListener() {
+        return new PauloSkipListener();
+    }
     private PauloItemReaderListener itemReaderListener() {
         return new PauloItemReaderListener();
     }
