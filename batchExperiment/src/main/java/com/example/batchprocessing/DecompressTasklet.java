@@ -1,7 +1,5 @@
 package com.example.batchprocessing;
 
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -15,7 +13,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 
 public class DecompressTasklet implements Tasklet {
 
@@ -41,7 +38,6 @@ public class DecompressTasklet implements Tasklet {
 
         if (inputDirectory.getName().endsWith(".txt")) {
             LOG.info("Not compressed zip, skipping step");
-
             FileUtils.copyFile(inputDirectory, new File(targetDirectory, targetFile));
 
             return RepeatStatus.FINISHED;
@@ -56,30 +52,22 @@ public class DecompressTasklet implements Tasklet {
 
 
         for (File file : files) {
-            LOG.info("decompress {}", file.getName());
+            if (file.isDirectory()) {
+                continue;
+            }
+            File target = new File(targetDirectory, makeName(file.getName()));
 
+            LOG.info("decompress {}", file.getName());
             try (
                     FileInputStream fis = new FileInputStream(file);
                     BufferedInputStream bis = new BufferedInputStream(fis);
                     GzipCompressorInputStream gis = new GzipCompressorInputStream(bis);
-                    TarArchiveInputStream tis = new TarArchiveInputStream(gis)
+                    FileOutputStream fos = new FileOutputStream(target)
             ) {
-                ArchiveEntry entry;
-                while ((entry = tis.getNextEntry()) != null) {
-                    File outputFile = new File(targetDirectory, entry.getName());
-                    if (entry.isDirectory()) {
-                        outputFile.mkdirs();
-                    } else {
-                        // ensure parent directories exist
-                        outputFile.getParentFile().mkdirs();
-                        try (OutputStream os = new FileOutputStream(outputFile)) {
-                            byte[] buffer = new byte[4096];
-                            int count;
-                            while ((count = tis.read(buffer)) != -1) {
-                                os.write(buffer, 0, count);
-                            }
-                        }
-                    }
+                byte[] buffer = new byte[4096];
+                int len;
+                while ((len = gis.read(buffer)) != -1) {
+                    fos.write(buffer, 0, len);
                 }
             }
 
@@ -112,5 +100,15 @@ public class DecompressTasklet implements Tasklet {
         }
 
         return RepeatStatus.FINISHED;
+    }
+
+    private String makeName(String name) {
+        int extensionPoint = name.lastIndexOf(".");
+
+        if (extensionPoint > 0) {
+            return name.substring(0, extensionPoint);
+        }
+
+        return name;
     }
 }
