@@ -12,11 +12,11 @@ public class PauloItemReaderListener implements ItemReadListener<Person> {
 
     @Override
     public void afterRead(Person item) {
-        LOG.info("after item read {}", item);
+//        LOG.info("after item read {}", item);
     }
 
     @Override
     public void beforeRead() {
-        LOG.info("before item read ");
+//        LOG.info("before item read ");/
     }
 }
