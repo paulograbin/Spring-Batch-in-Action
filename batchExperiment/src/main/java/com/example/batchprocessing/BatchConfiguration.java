@@ -68,10 +68,19 @@ public class BatchConfiguration {
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
+                .listener(chunkListener())
+                .listener(itemReaderListener())
                 .build();
     }
 
-    @Bean
+    private PauloItemReaderListener itemReaderListener() {
+        return new PauloItemReaderListener();
+    }
+
+    public ChunkListener chunkListener() {
+        return new PauloCustomChunkListener();
+    }
+
     public Tasklet pirocoTasklet() {
         return new PirocoTasklet();
     }
