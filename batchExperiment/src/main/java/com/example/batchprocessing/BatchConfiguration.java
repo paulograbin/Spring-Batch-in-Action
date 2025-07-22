@@ -1,8 +1,12 @@
 package com.example.batchprocessing;
 
+import com.example.batchprocessing.exceptions.CosmicRayException;
+import com.example.batchprocessing.exceptions.RandomOcurringException;
 import com.example.batchprocessing.listeners.PauloCustomChunkListener;
 import com.example.batchprocessing.listeners.PauloItemReaderListener;
+import com.example.batchprocessing.listeners.PauloRetryListener;
 import com.example.batchprocessing.listeners.PauloSkipListener;
+import com.example.batchprocessing.skip.PauloExceptionSkiperPolicy;
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.SkipListener;
@@ -20,11 +24,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.retry.policy.AlwaysRetryPolicy;
+import org.springframework.retry.RetryListener;
+import org.springframework.retry.RetryPolicy;
+import org.springframework.retry.policy.ExceptionClassifierRetryPolicy;
 import org.springframework.retry.policy.MaxAttemptsRetryPolicy;
 
 import javax.sql.DataSource;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class BatchConfiguration {
@@ -70,10 +78,17 @@ public class BatchConfiguration {
 
     @Bean
     public Step step1(JobRepository jobRepository, DataSourceTransactionManager transactionManager, FlatFileItemReader<Person> reader, PersonItemProcessor processor, JdbcBatchItemWriter<Person> writer) {
-        var alwaysRetry = new AlwaysRetryPolicy();
+        var threeAttempts = new MaxAttemptsRetryPolicy();
+        threeAttempts.setMaxAttempts(3);
 
-        var retryPolicy = new MaxAttemptsRetryPolicy();
-        retryPolicy.setMaxAttempts(3);
+        var exceptionPolicy = new ExceptionClassifierRetryPolicy();
+
+        Map<Class<? extends Throwable>, RetryPolicy> exceptionMap = new HashMap<>();
+        exceptionMap.put(CosmicRayException.class, new MaxAttemptsRetryPolicy(RetryPolicy.NO_MAXIMUM_ATTEMPTS_SET));
+        exceptionMap.put(RandomOcurringException.class, threeAttempts);
+
+        exceptionPolicy.setPolicyMap(exceptionMap);
+
 
         return new StepBuilder("regular-reader-processor-writer", jobRepository)
                 .<Person, Person>chunk(3, transactionManager)
@@ -81,17 +96,47 @@ public class BatchConfiguration {
                 .processor(processor)
                 .writer(writer)
                 .faultTolerant()
+                .listener(retryListener())
                 .retryLimit(3)
-                .retryPolicy(retryPolicy)
+                .skipPolicy(skipPolicy())
+                .retryPolicy(exceptionPolicy)
                 .listener(skipListener())
                 .listener(chunkListener())
                 .listener(itemReaderListener())
                 .build();
     }
 
+    private PauloExceptionSkiperPolicy skipPolicy() {
+        return new PauloExceptionSkiperPolicy();
+    }
+
+    private RetryListener retryListener() {
+        return new PauloRetryListener();
+    }
+
+//    @Bean
+//    public RetryPolicy retryPolicy() {
+//        SimpleRetryPolicy fiveAttemps = new SimpleRetryPolicy();
+//        fiveAttemps.setMaxAttempts(5);
+//
+//        SimpleRetryPolicy threeAttemps = new SimpleRetryPolicy();
+//        fiveAttemps.setMaxAttempts(3);
+//
+//        ExceptionClassifierRetryPolicy exceptionClassifierRetryPolicy = new ExceptionClassifierRetryPolicy();
+//
+//        Map<Class<? extends Throwable>, RetryPolicy> aaa = new HashMap<>();
+//        aaa.put(RuntimeException.class, fiveAttemps);
+//        aaa.put(IllegalArgumentException.class, threeAttemps);
+//
+//        exceptionClassifierRetryPolicy.setPolicyMap(aaa);
+//
+//        return exceptionClassifierRetryPolicy;
+//    }
+
     private SkipListener<Person, Person> skipListener() {
         return new PauloSkipListener();
     }
+
     private PauloItemReaderListener itemReaderListener() {
         return new PauloItemReaderListener();
     }
