@@ -28,6 +28,8 @@ import org.springframework.retry.RetryListener;
 import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.policy.ExceptionClassifierRetryPolicy;
 import org.springframework.retry.policy.MaxAttemptsRetryPolicy;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -178,6 +180,8 @@ public class BatchConfiguration {
     public Step pirocoStep(JobRepository jobRepository, DataSourceTransactionManager transactionManager) {
         return new StepBuilder("pirocoStep", jobRepository)
                 .tasklet(pirocoTasklet(), transactionManager)
+                .transactionAttribute(new DefaultTransactionAttribute(TransactionDefinition.PROPAGATION_NEVER))
+                .allowStartIfComplete(true)
                 .build();
     }
 
