@@ -96,6 +96,7 @@ public class BatchConfiguration {
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
+                .chunk(5)
                 .faultTolerant()
                 .listener(retryListener())
                 .retryLimit(3)
