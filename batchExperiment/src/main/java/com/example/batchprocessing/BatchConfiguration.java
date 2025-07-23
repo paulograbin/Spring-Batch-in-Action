@@ -92,6 +92,7 @@ public class BatchConfiguration {
 
         return new StepBuilder("regular-reader-processor-writer", jobRepository)
                 .<Person, Person>chunk(3, transactionManager)
+                .allowStartIfComplete(true)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
