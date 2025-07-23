@@ -74,7 +74,7 @@ public class BatchConfiguration {
                 .listener(listener)
 //                .start(decompressStep)
                 .start(step1)
-//                .next(pirocoStep)
+                .next(pirocoStep)
                 .build();
     }
 
@@ -90,7 +90,6 @@ public class BatchConfiguration {
         exceptionMap.put(RandomOcurringException.class, threeAttempts);
 
         exceptionPolicy.setPolicyMap(exceptionMap);
-
 
         return new StepBuilder("regular-reader-processor-writer", jobRepository)
                 .<Person, Person>chunk(3, transactionManager)
