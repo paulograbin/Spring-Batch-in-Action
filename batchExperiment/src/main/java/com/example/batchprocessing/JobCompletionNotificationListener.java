@@ -2,12 +2,11 @@ package com.example.batchprocessing;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
-import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -34,9 +33,11 @@ public class JobCompletionNotificationListener implements JobExecutionListener {
         if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
             log.info("!!! JOB FINISHED! Time to verify the results");
 
-            jdbcTemplate
-                    .query("SELECT firstName, lastName FROM people", new DataClassRowMapper<>(Person.class))
-                    .forEach(person -> log.info("Found <{}> in the database.", person));
+            RowCallbackHandler aaa = resultSet -> log.info("Found {} people in the database", resultSet.getInt(1));
+            jdbcTemplate.query("select count(*) from people", aaa);
+
+//            jdbcTemplate.query("SELECT firstName, lastName FROM people", new DataClassRowMapper<>(Person.class))
+//                    .forEach(person -> log.info("Found <{}> in the database.", person));
         } else {
             log.warn("!!! JOB FINISHED WITH RESULT {}", jobExecution.getStatus());
         }
