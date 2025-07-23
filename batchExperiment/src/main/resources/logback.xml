@@ -6,8 +6,9 @@
     </appender>
 
     <logger name="com.example.batchprocessing" level="all"/>
+    <logger name="org.springframework.jdbc" level="info"/>
 
-    <root level="error">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

@@ -35,7 +35,7 @@ public class JobCompletionNotificationListener implements JobExecutionListener {
             log.info("!!! JOB FINISHED! Time to verify the results");
 
             jdbcTemplate
-                    .query("SELECT first_name, last_name FROM people", new DataClassRowMapper<>(Person.class))
+                    .query("SELECT firstName, lastName FROM people", new DataClassRowMapper<>(Person.class))
                     .forEach(person -> log.info("Found <{}> in the database.", person));
         } else {
             log.warn("!!! JOB FINISHED WITH RESULT {}", jobExecution.getStatus());
