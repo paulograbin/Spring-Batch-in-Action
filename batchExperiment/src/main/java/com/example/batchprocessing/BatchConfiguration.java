@@ -97,6 +97,7 @@ public class BatchConfiguration {
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
+                .transactionAttribute(new DefaultTransactionAttribute(TransactionDefinition.ISOLATION_READ_UNCOMMITTED))
                 .chunk(5)
                 .faultTolerant()
                 .listener(retryListener())
