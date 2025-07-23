@@ -1,13 +1,13 @@
 package com.example.batchprocessing;
 
-import com.example.batchprocessing.exceptions.CosmicRayException;
-import com.example.batchprocessing.exceptions.RandomAbortException;
 import com.example.batchprocessing.exceptions.RandomOcurringException;
 import com.example.batchprocessing.exceptions.RandomSkipException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.Random;
 
 public class PersonItemProcessor implements ItemProcessor<Person, Person> {
@@ -31,6 +31,7 @@ public class PersonItemProcessor implements ItemProcessor<Person, Person> {
         final Person transformedPerson = new Person();
         transformedPerson.firstName = firstName;
         transformedPerson.lastName = lastName;
+		transformedPerson.creationTime = new Date();
 
         log.info("Converting ({}) into ({})", person, transformedPerson);
 

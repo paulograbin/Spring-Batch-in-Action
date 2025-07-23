@@ -1,8 +1,10 @@
-create table people
+create table springBatch.people
 (
-    id        int auto_increment primary key,
-    firstName varchar(255) null,
-    lastName  varchar(255) null
+    id           int auto_increment
+        primary key,
+    firstName    varchar(255) null,
+    lastName     varchar(255) null,
+    creationTime timestamp    null
 );
 
 CREATE TABLE BATCH_JOB_INSTANCE

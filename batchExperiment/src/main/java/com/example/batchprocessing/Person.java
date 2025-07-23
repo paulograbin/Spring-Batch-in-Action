@@ -1,9 +1,12 @@
 package com.example.batchprocessing;
 
+import java.util.Date;
+
 public class Person {
 
     public String firstName;
     public String lastName;
+    public Date creationTime;
 
     public String getFirstName() {
         return firstName;
@@ -19,6 +22,14 @@ public class Person {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Date getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
     }
 
     @Override

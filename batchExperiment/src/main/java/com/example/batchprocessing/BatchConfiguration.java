@@ -60,7 +60,7 @@ public class BatchConfiguration {
     @Bean
     public JdbcBatchItemWriter<Person> writer(DataSource dataSource) {
         return new JdbcBatchItemWriterBuilder<Person>()
-                .sql("INSERT INTO people (firstName, lastName) VALUES (:firstName, :lastName)")
+                .sql("INSERT INTO people (firstName, lastName, creationTime) VALUES (:firstName, :lastName, :creationTime)")
                 .dataSource(dataSource)
                 .beanMapped()
                 .build();
