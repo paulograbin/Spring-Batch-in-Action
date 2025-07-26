@@ -1,24 +1,16 @@
-/**
- * 
- */
 package com.manning.sbia.ch09.batch;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
-
-import javax.sql.DataSource;
-
+import com.manning.sbia.ch09.domain.Order;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.manning.sbia.ch09.domain.Order;
+import javax.sql.DataSource;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.List;
 
-/**
- * @author acogoluegnes
- *
- */
+
 public class ShippedOrderWriter implements ItemWriter<Order> {
 	
 	private JdbcTemplate jdbcTemplate;
@@ -27,9 +19,6 @@ public class ShippedOrderWriter implements ItemWriter<Order> {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.springframework.batch.item.ItemWriter#write(java.util.List)
-	 */
 	@Override
 	public void write(final List<? extends Order> items) throws Exception {
 		jdbcTemplate.batchUpdate("update orders set shipped = ?",
