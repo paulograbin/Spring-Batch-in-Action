@@ -9,8 +9,7 @@
 	<batch:job id="job">
 		<batch:step id="step">
 			<batch:tasklet>
-				<batch:chunk reader="reader" processor="processor" writer="writer"
-					commit-interval="5" retry-limit="3" skip-limit="3" >
+				<batch:chunk reader="reader" processor="processor" writer="writer" commit-interval="5" retry-limit="3" skip-limit="3" >
 					<batch:retryable-exception-classes>
 						<batch:include class="org.springframework.dao.OptimisticLockingFailureException" />
 						<batch:include class="org.springframework.dao.DeadlockLoserDataAccessException" />
