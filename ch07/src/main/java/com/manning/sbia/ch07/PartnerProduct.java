@@ -13,13 +13,9 @@ import java.util.Date;
 public class PartnerProduct {
 
 	private String id;
-	
 	private String title;
-	
 	private String details;
-	
 	private BigDecimal price;
-	
 	private Date releaseDate;
 
 	public String getId() {

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.manning.sbia.ch07;
 
 import java.util.Calendar;
@@ -29,43 +26,45 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
 public class DrivingQueryTest {
-	
-	@Autowired
-	private JobLauncher jobLauncher;
-	
-	@Autowired
-	private Job jobWithItemProcessor;
-	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-	
-	private String targetFile = "file:./target/output.txt";
-	
-	@Autowired
-	private ResourceLoader resourceLoader;
-	
-	@Before public void setUp() throws Exception  {
-		Resource resource = resourceLoader.getResource(targetFile);
-		if(resource.exists()) {
-			boolean deleted = FileUtils.deleteQuietly(resource.getFile());
-			Assert.assertTrue("couldn't delete target file before execution", deleted);
-		}
-	}
-	
-	
-	@Test public void drivingQuery() throws Exception {
-		Assert.assertEquals(9, jdbcTemplate.queryForInt("select count(1) from product"));		
-		Calendar updateTimestampBound = Calendar.getInstance();
-		updateTimestampBound.set(2010, Calendar.JUNE, 30, 12, 00);
-		JobExecution exec = jobLauncher.run(jobWithItemProcessor, new JobParametersBuilder()
-			.addString("targetFile", targetFile)
-			.addDate("updateTimestampBound",updateTimestampBound.getTime())
-			.toJobParameters()
-		);
-		Assert.assertEquals(ExitStatus.COMPLETED, exec.getExitStatus());
-		
-		Resource resource = resourceLoader.getResource(targetFile);
-		Assert.assertEquals(7,FileUtils.readLines(resource.getFile()).size());
-	}
-	
+
+    @Autowired
+    private JobLauncher jobLauncher;
+
+    @Autowired
+    private Job jobWithItemProcessor;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    private String targetFile = "file:./target/output.txt";
+
+    @Autowired
+    private ResourceLoader resourceLoader;
+
+    @Before
+    public void setUp() throws Exception {
+        Resource resource = resourceLoader.getResource(targetFile);
+        if (resource.exists()) {
+            boolean deleted = FileUtils.deleteQuietly(resource.getFile());
+            Assert.assertTrue("couldn't delete target file before execution", deleted);
+        }
+    }
+
+
+    @Test
+    public void drivingQuery() throws Exception {
+        Assert.assertEquals(9, jdbcTemplate.queryForInt("select count(1) from product"));
+        Calendar updateTimestampBound = Calendar.getInstance();
+        updateTimestampBound.set(2010, Calendar.JUNE, 30, 12, 00);
+        JobExecution exec = jobLauncher.run(jobWithItemProcessor, new JobParametersBuilder()
+                .addString("targetFile", targetFile)
+                .addDate("updateTimestampBound", updateTimestampBound.getTime())
+                .toJobParameters()
+        );
+        Assert.assertEquals(ExitStatus.COMPLETED, exec.getExitStatus());
+
+        Resource resource = resourceLoader.getResource(targetFile);
+        Assert.assertEquals(7, FileUtils.readLines(resource.getFile()).size());
+    }
+
 }
