@@ -12,6 +12,6 @@ public class PauloRetryListener extends RetryListenerSupport {
 
     @Override
     public <T, E extends Throwable> void onError(RetryContext context, RetryCallback<T, E> callback, Throwable throwable) {
-        LOG.info("Error on retry {}", throwable);
+        LOG.info("An retry error has ocurred, let's do it once again");
     }
 }
