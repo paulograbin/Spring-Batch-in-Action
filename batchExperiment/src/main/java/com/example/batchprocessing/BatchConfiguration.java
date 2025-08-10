@@ -6,6 +6,7 @@ import com.example.batchprocessing.listeners.PauloCustomChunkListener;
 import com.example.batchprocessing.listeners.PauloItemReaderListener;
 import com.example.batchprocessing.listeners.PauloRetryListener;
 import com.example.batchprocessing.listeners.PauloSkipListener;
+import com.example.batchprocessing.listeners.PauloStepListener;
 import com.example.batchprocessing.skip.PauloExceptionSkiperPolicy;
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.Job;
@@ -104,10 +105,15 @@ public class BatchConfiguration {
                 .retryLimit(3)
                 .skipPolicy(skipPolicy())
                 .retryPolicy(exceptionPolicy)
+                .listener(stepListener())
                 .listener(skipListener())
                 .listener(chunkListener())
                 .listener(itemReaderListener())
                 .build();
+    }
+
+    private StepExecutionListener stepListener() {
+        return new PauloStepListener();
     }
 
     private PauloExceptionSkiperPolicy skipPolicy() {
