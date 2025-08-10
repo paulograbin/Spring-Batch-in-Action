@@ -13,6 +13,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.job.flow.JobExecutionDecider;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -76,7 +77,18 @@ public class BatchConfiguration {
 //                .start(decompressStep)
                 .start(step1)
                 .next(pirocoStep)
+                .next(myDecider())
+                    .on("REPEAT")
+                    .to(pirocoStep)
+                    .on("END")
+                    .end()
+                    .on("*").end()
+                .build()
                 .build();
+    }
+
+    private JobExecutionDecider myDecider() {
+        return new PauloJobExecutionDecider();
     }
 
     @Bean
