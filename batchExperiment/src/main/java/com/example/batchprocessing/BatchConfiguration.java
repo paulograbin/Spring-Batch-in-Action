@@ -80,7 +80,7 @@ public class BatchConfiguration {
         return new JobBuilder("importUserJob", jobRepository)
                 .listener(listener)
                 .start(step1)
-                .start(secondStepWithCompositeProcessor)
+                .next(secondStepWithCompositeProcessor)
                 .next(myDecider())
                     .on("REPEAT")
                     .to(pirocoStep)
