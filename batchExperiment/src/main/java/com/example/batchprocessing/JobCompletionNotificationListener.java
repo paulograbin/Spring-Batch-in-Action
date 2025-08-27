@@ -31,7 +31,7 @@ public class JobCompletionNotificationListener implements JobExecutionListener {
     @Override
     public void afterJob(JobExecution jobExecution) {
         if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
-            log.info("!!! JOB FINISHED! Time to verify the results");
+            log.info("Job finished with status {}! Time to verify the results",  jobExecution.getStatus());
 
             RowCallbackHandler aaa = resultSet -> log.info("Found {} people in the database", resultSet.getInt(1));
             jdbcTemplate.query("select count(*) from people", aaa);

@@ -2,24 +2,31 @@ package com.example.batchprocessing;
 
 import com.example.batchprocessing.exceptions.CosmicRayException;
 import com.example.batchprocessing.exceptions.RandomOcurringException;
+import com.example.batchprocessing.itemProcessors.JustAnotherSimpleItemProcessor;
+import com.example.batchprocessing.itemProcessors.JustOneSimpleItemProcessor;
 import com.example.batchprocessing.listeners.PauloCustomChunkListener;
 import com.example.batchprocessing.listeners.PauloItemReaderListener;
 import com.example.batchprocessing.listeners.PauloRetryListener;
 import com.example.batchprocessing.listeners.PauloSkipListener;
+import com.example.batchprocessing.listeners.PauloStepListener;
 import com.example.batchprocessing.skip.PauloExceptionSkiperPolicy;
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.job.flow.JobExecutionDecider;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.JsonLineMapper;
+import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -69,17 +76,27 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Job importUserJob(JobRepository jobRepository, Step decompressStep, Step step1, Step pirocoStep, JobCompletionNotificationListener listener) {
+    public Job importUserJob(JobRepository jobRepository, Step decompressStep, Step step1, Step secondStepWithCompositeProcessor, Step pirocoStep, JobCompletionNotificationListener listener) {
         return new JobBuilder("importUserJob", jobRepository)
                 .listener(listener)
-//                .start(decompressStep)
                 .start(step1)
-                .next(pirocoStep)
+                .next(secondStepWithCompositeProcessor)
+                .next(myDecider())
+                    .on("REPEAT")
+                    .to(pirocoStep)
+                    .on("END")
+                    .end()
+                    .on("*").end()
+                .build()
                 .build();
     }
 
+    private JobExecutionDecider myDecider() {
+        return new PauloJobExecutionDecider();
+    }
+
     @Bean
-    public Step step1(JobRepository jobRepository, DataSourceTransactionManager transactionManager, FlatFileItemReader<Person> reader, PersonItemProcessor processor, JdbcBatchItemWriter<Person> writer) {
+    public Step step1(JobRepository jobRepository, DataSourceTransactionManager transactionManager, FlatFileItemReader<Person> reader, PersonItemProcessor personItemProcessor, JdbcBatchItemWriter<Person> writer) {
         var threeAttempts = new MaxAttemptsRetryPolicy();
         threeAttempts.setMaxAttempts(3);
 
@@ -95,7 +112,7 @@ public class BatchConfiguration {
                 .<Person, Person>chunk(3, transactionManager)
                 .allowStartIfComplete(true)
                 .reader(reader)
-                .processor(processor)
+                .processor(personItemProcessor)
                 .writer(writer)
                 .transactionAttribute(new DefaultTransactionAttribute(TransactionDefinition.ISOLATION_READ_UNCOMMITTED))
                 .chunk(5)
@@ -104,10 +121,28 @@ public class BatchConfiguration {
                 .retryLimit(3)
                 .skipPolicy(skipPolicy())
                 .retryPolicy(exceptionPolicy)
+                .listener(stepListener())
                 .listener(skipListener())
                 .listener(chunkListener())
                 .listener(itemReaderListener())
                 .build();
+    }
+
+    @Bean
+    public Step secondStepWithCompositeProcessor(JobRepository jobRepository, DataSourceTransactionManager transactionManager, FlatFileItemReader<Person> reader, JdbcBatchItemWriter<Person> writer, ItemProcessor<Person, Person> compositeItemProcessor) {
+        return new StepBuilder("secondStep-compositeProcessors", jobRepository)
+                .<Person, Person>chunk(3, transactionManager)
+                .allowStartIfComplete(true)
+                .listener(stepListener())
+                .faultTolerant()
+                .reader(reader)
+                .processor(compositeItemProcessor)
+                .writer(writer)
+                .build();
+    }
+
+    private StepExecutionListener stepListener() {
+        return new PauloStepListener();
     }
 
     private PauloExceptionSkiperPolicy skipPolicy() {
@@ -191,4 +226,21 @@ public class BatchConfiguration {
                 .tasklet(decompressTasklet(), transactionManager)
                 .build();
     }
+
+    @Bean
+    public ItemProcessor<Person, Person> compositeItemProcessor(JustOneSimpleItemProcessor justOneSimpleItemProcessor, JustAnotherSimpleItemProcessor justAnotherSimpleItemProcessor) {
+        return new CompositeItemProcessor<>(justAnotherSimpleItemProcessor, justOneSimpleItemProcessor);
+    }
+
+    @Bean
+    public JustOneSimpleItemProcessor justOneSimpleItemProcessor() {
+        return new JustOneSimpleItemProcessor();
+    }
+
+    @Bean
+    public JustAnotherSimpleItemProcessor justAnotherSimpleItemProcessor() {
+        return new JustAnotherSimpleItemProcessor();
+    }
+
+
 }

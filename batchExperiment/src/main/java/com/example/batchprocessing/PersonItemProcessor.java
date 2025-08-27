@@ -1,12 +1,9 @@
 package com.example.batchprocessing;
 
-import com.example.batchprocessing.exceptions.RandomOcurringException;
-import com.example.batchprocessing.exceptions.RandomSkipException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.Random;
 
@@ -20,7 +17,7 @@ public class PersonItemProcessor implements ItemProcessor<Person, Person> {
 
     public PersonItemProcessor() {
         failCount = 0;
-         random = new Random();
+        random = new Random();
     }
 
     @Override
@@ -31,33 +28,32 @@ public class PersonItemProcessor implements ItemProcessor<Person, Person> {
         final Person transformedPerson = new Person();
         transformedPerson.firstName = firstName;
         transformedPerson.lastName = lastName;
-		transformedPerson.creationTime = new Date();
+        transformedPerson.creationTime = new Date();
 
         log.info("Converting ({}) into ({})", person, transformedPerson);
 
-
-        int i1 = random.nextInt(10);
-        if (i1 == 1) {
-            log.warn(person.getFirstName() + " will be skipped!!!!");
-            throw new RandomSkipException("Skipped " + person + " randomly...");
-        }
-
-        int i = random.nextInt(10);
-        if (i > 6) {
-            failCount++;
-            log.info("Falhou {} !!!!!!!!!! {} - {}", failCount, person, i);
-
-            boolean b = random.nextBoolean();
-
-            if (b) {
-                throw new RandomOcurringException("Agora deu " + i);
-            } else {
-//                throw new CosmicRayException("ABOOOOORT");
-            }
-
-        } else {
-//            log.info("Não falhou " + i);
-        }
+//        int skipRandom = random.nextInt(10);
+//        if (skipRandom == 1) {
+//            log.warn(person.getFirstName() + " will be skipped!!!!");
+//            throw new RandomSkipException("Skipped " + person + " randomly...");
+//        }
+//
+//        int failRandom = random.nextInt(10);
+//        if (failRandom > 8) {
+//            failCount++;
+//            log.info("Falhou no {} !!!!!!!!!! Já falharam {}, e o resultado foi {}", person, failCount, failRandom);
+//
+//            boolean b = random.nextBoolean();
+//
+////            if (b) {
+//                throw new RandomOcurringException("Agora deu " + failRandom);
+////            } else {
+////                throw new CosmicRayException("ABOOOOORT");
+////            }
+//
+//        } else {
+////            log.info("Não falhou " + failRandom);
+//        }
 
         return transformedPerson;
     }
