@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.manning.sbia.ch11.integration;
 
 import java.util.Map;
@@ -23,26 +20,26 @@ import org.springframework.batch.core.repository.JobRestartException;
 public class JobLaunchingMessageHandler {
 	
 	private JobRegistry jobRegistry;
-	
-	private JobLauncher jobLauncher;	
+	private JobLauncher jobLauncher;
 
-	public JobLaunchingMessageHandler(JobRegistry jobLocator,
-			JobLauncher jobLauncher) {
+	public JobLaunchingMessageHandler(JobRegistry jobLocator, JobLauncher jobLauncher) {
 		super();
-		this.jobRegistry = jobLocator;
+
+        this.jobRegistry = jobLocator;
 		this.jobLauncher = jobLauncher;
 	}
 
-	public JobExecution launch(JobLaunchRequest request)
-			throws JobExecutionAlreadyRunningException, JobRestartException,
-			JobInstanceAlreadyCompleteException, JobParametersInvalidException,
-			NoSuchJobException {
-		Job job = jobRegistry.getJob(request.getJobName());
-		JobParametersBuilder builder = new JobParametersBuilder();
+	public JobExecution launch(JobLaunchRequest request) throws JobExecutionAlreadyRunningException, JobRestartException,
+			JobInstanceAlreadyCompleteException, JobParametersInvalidException, NoSuchJobException {
+
+        Job job = jobRegistry.getJob(request.getJobName());
+
+        JobParametersBuilder builder = new JobParametersBuilder();
 		for(Map.Entry<String,String> entry : request.getJobParameters().entrySet()) {
 			builder.addString(entry.getKey(), entry.getValue());
 		}
-		return jobLauncher.run(job, builder.toJobParameters());
+
+        return jobLauncher.run(job, builder.toJobParameters());
 	}
 	
 }
