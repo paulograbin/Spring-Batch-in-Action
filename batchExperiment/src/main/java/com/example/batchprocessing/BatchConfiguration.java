@@ -17,6 +17,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.flow.JobExecutionDecider;
+import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -30,7 +31,9 @@ import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.retry.RetryListener;
 import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.policy.ExceptionClassifierRetryPolicy;
@@ -125,11 +128,12 @@ public class BatchConfiguration {
                 .listener(skipListener())
                 .listener(chunkListener())
                 .listener(itemReaderListener())
+                .taskExecutor(taskExecutor())
                 .build();
     }
 
     @Bean
-    public Step secondStepWithCompositeProcessor(JobRepository jobRepository, DataSourceTransactionManager transactionManager, FlatFileItemReader<Person> reader, JdbcBatchItemWriter<Person> writer, ItemProcessor<Person, Person> compositeItemProcessor) {
+    public Step secondStepWithCompositeProcessor(TaskExecutor taskExecutor, JobRepository jobRepository, DataSourceTransactionManager transactionManager, FlatFileItemReader<Person> reader, JdbcBatchItemWriter<Person> writer, ItemProcessor<Person, Person> compositeItemProcessor) {
         return new StepBuilder("secondStep-compositeProcessors", jobRepository)
                 .<Person, Person>chunk(3, transactionManager)
                 .allowStartIfComplete(true)
@@ -138,6 +142,7 @@ public class BatchConfiguration {
                 .reader(reader)
                 .processor(compositeItemProcessor)
                 .writer(writer)
+                .taskExecutor(taskExecutor)
                 .build();
     }
 
@@ -242,5 +247,27 @@ public class BatchConfiguration {
         return new JustAnotherSimpleItemProcessor();
     }
 
+    @Bean
+    public TaskExecutor taskExecutor() {
+        var threadPoolTaskExecutor = new org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor();
+
+        threadPoolTaskExecutor.setCorePoolSize(Runtime.getRuntime().availableProcessors() / 2);
+        threadPoolTaskExecutor.setMaxPoolSize(Runtime.getRuntime().availableProcessors());
+        threadPoolTaskExecutor.setQueueCapacity(25);
+
+        return threadPoolTaskExecutor;
+    }
+
+    @Bean
+    public MBeanExporter aaa(JobOperator jobOperator) {
+        MBeanExporter mBeanExporter = new MBeanExporter();
+
+        Map<String, Object> aaaa = new HashMap<>(5);
+        aaaa.put("com.example.batchprocessing:name=jobOperator", jobOperator);
+
+        mBeanExporter.setBeans(aaaa);
+
+        return mBeanExporter;
+    }
 
 }
